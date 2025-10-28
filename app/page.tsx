@@ -56,7 +56,7 @@ function EnergyGlobe() {
   const outerRef = useRef<THREE.Mesh>(null!)
   const innerRef = useRef<THREE.Mesh>(null!)
   const continentsRef = useRef<THREE.Mesh>(null!)
-  const map = useLoader(THREE.TextureLoader, '/textures/earth_bw.jpg')
+  const map = useLoader(THREE.TextureLoader, '/textures/earth_bw_inv.jpg')
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
