@@ -1,7 +1,7 @@
 'use client'
 
 import { Space_Grotesk } from 'next/font/google'
-import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef, useMemo } from 'react'
@@ -51,68 +51,30 @@ function ParticleField() {
   )
 }
 
-// --- Globen med tydliga kontinenter ---
-function EnergyGlobe() {
-  const outerRef = useRef<THREE.Mesh>(null!)
-  const innerRef = useRef<THREE.Mesh>(null!)
-  const continentsRef = useRef<THREE.Mesh>(null!)
+// --- Ny, enkel och fungerande Glow-Earth baserad på din inverterade textur ---
+function GlowEarth() {
+  const earthRef = useRef<THREE.Mesh>(null!)
   const map = useLoader(THREE.TextureLoader, '/textures/earth_bw_inv.jpg')
 
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime
-    if (outerRef.current) outerRef.current.rotation.y += 0.0015
-    if (innerRef.current) innerRef.current.rotation.y -= 0.001
-    if (continentsRef.current) continentsRef.current.rotation.y += 0.0015
-    const glow = 0.3 + Math.sin(t * 2) * 0.25
-    if (innerRef.current?.material instanceof THREE.MeshStandardMaterial) {
-      innerRef.current.material.emissiveIntensity = glow
-    }
+  useFrame(() => {
+    if (earthRef.current) earthRef.current.rotation.y += 0.0015
   })
 
   return (
-    <>
-      {/* Yttre blå mesh */}
-      <mesh ref={outerRef}>
-        <sphereGeometry args={[1.05, 64, 64]} />
-        <meshStandardMaterial
-          map={map}
-          color="#66ccff"
-          emissive="#66ccff"
-          emissiveIntensity={0.8}
-          transparent
-          opacity={0.1}
-          wireframe
-        />
-      </mesh>
-
-      {/* Inre glöd */}
-      <mesh ref={innerRef}>
-        <sphereGeometry args={[0.98, 128, 128]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          emissive="#80bfff"
-          emissiveIntensity={0.4}
-          roughness={0.3}
-          metalness={0.2}
-          transparent
-          opacity={0.7}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {/* Kontinentoverlay */}
-      <mesh ref={continentsRef}>
-        <sphereGeometry args={[1.02, 128, 128]} />
-        <meshStandardMaterial
-          map={map}
-          emissive="#ffffff"
-          emissiveIntensity={1.8}
-          color="#ffffff"
-          transparent
-          opacity={0.95}
-        />
-      </mesh>
-    </>
+    <mesh ref={earthRef}>
+      <sphereGeometry args={[1, 128, 128]} />
+      <meshStandardMaterial
+        map={map}
+        color="#ffffff"
+        emissive="#ffffff"
+        emissiveIntensity={2.2}
+        roughness={0.2}
+        metalness={0.1}
+        transparent
+        opacity={0.95}
+        toneMapped={false}
+      />
+    </mesh>
   )
 }
 
@@ -160,13 +122,13 @@ export default function Home() {
 
         <ParticleField /> {/* ← Partiklar som inte påverkas av orbit */}
         <group>
-          <EnergyGlobe /> {/* ← Globen som kan roteras */}
+          <GlowEarth /> {/* ← Globen som kan roteras */}
           <OrbitControls enableZoom={false} autoRotate={false} />
         </group>
 
         <EffectComposer>
           <Bloom
-            intensity={1.2}
+            intensity={1.3}
             luminanceThreshold={0.0}
             luminanceSmoothing={1.2}
             height={400}
@@ -188,3 +150,4 @@ export default function Home() {
     </main>
   )
 }
+
