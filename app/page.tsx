@@ -3,9 +3,10 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main style={{
-      backgroundColor: '#0a0a0a',
+      backgroundColor: '#060345',
       color: '#fff',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: '"Century Gothic", CenturyGothic, AppleGothic, sans-serif',
+      fontWeight: 'bold',
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',
@@ -18,7 +19,7 @@ export default function Home() {
         DON'T JUST WATCH. REACT.
       </p>
       <a 
-        href="https://www.youtube.com/@NextMomentumClips" 
+        href="https://www.youtube.com/@NextMomentia" 
         target="_blank" 
         rel="noopener noreferrer"
         style={{
