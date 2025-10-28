@@ -25,15 +25,20 @@ export default function Home() {
       overflow: 'hidden'
     }}>
       <h1 className={spaceGrotesk.className} style={{
-        position: 'absolute',
-        top: '6%',
-        textAlign: 'center',
-        letterSpacing: '3px',
-        fontSize: '3rem',
-        fontWeight: '700'
-      }}>
-        NextMomentia
-      </h1>
+    position: 'absolute',
+    top: '6%',
+    textAlign: 'center',
+    fontSize: '3rem',
+    fontWeight: '700',
+    letterSpacing: '-1.2px',
+    background: 'linear-gradient(90deg, #ffffff 0%, #80bfff 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    textShadow: '0 0 15px rgba(128,191,255,0.35)',
+  }}
+>
+  NextMomentia
+</h1>
 
       <Canvas camera={{ position: [0, 0, 3.5] }}>
         <ambientLight intensity={0.6} />
