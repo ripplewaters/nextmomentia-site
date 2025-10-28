@@ -3,7 +3,6 @@
 import { Space_Grotesk } from 'next/font/google'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useMemo } from 'react'
-import Globe from 'globe.gl'
 import * as THREE from 'three'
 
 const spaceGrotesk = Space_Grotesk({
@@ -11,7 +10,7 @@ const spaceGrotesk = Space_Grotesk({
   weight: ['700'],
 })
 
-// --- Partikelfält (samma som innan) ---
+// --- Partikelfält i bakgrunden ---
 function ParticleField() {
   const pointsRef = useRef<THREE.Points>(null!)
   const particles = useMemo(() => {
@@ -47,39 +46,52 @@ function ParticleField() {
   )
 }
 
-// --- Ny Globe.gl-komponent ---
+// --- Globe.gl (client-only import) ---
 function GlobeOutline() {
   const globeEl = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-  // Kör bara i browsern
-  if (typeof window === 'undefined' || !globeEl.current) return
+    if (typeof window === 'undefined' || !globeEl.current) return
 
-  const globe = new Globe(globeEl.current)
-    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-    .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-    .showGraticules(true)
-    .showAtmosphere(true)
-    .atmosphereColor('#80bfff')
-    .atmosphereAltitude(0.15)
-    .polygonCapColor(() => 'rgba(255,255,255,0.05)')
-    .polygonSideColor(() => 'rgba(255,255,255,0.2)')
-    .polygonStrokeColor(() => '#ffffff')
+    // Ladda Globe.gl dynamiskt bara i browsern
+    import('globe.gl').then((GlobeModule) => {
+      const Globe = GlobeModule.default
+      const globe = new Globe(globeEl.current!)
 
-  globe.controls().enableZoom = false
-  globe.controls().autoRotate = true
-  globe.controls().autoRotateSpeed = 0.8
-  globe.width(600).height(600)
+      globe
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+        .showGraticules(true)
+        .showAtmosphere(true)
+        .atmosphereColor('#80bfff')
+        .atmosphereAltitude(0.25)
+        .polygonCapColor(() => 'rgba(255,255,255,0.05)')
+        .polygonSideColor(() => 'rgba(255,255,255,0.2)')
+        .polygonStrokeColor(() => '#ffffff')
+        .backgroundColor('#040224')
 
-  return () => {
-    globeEl.current?.replaceChildren()
-  }
-}, [])
+      globe.controls().enableZoom = false
+      globe.controls().autoRotate = true
+      globe.controls().autoRotateSpeed = 0.8
+      globe.width(800).height(800)
+    })
+  }, [])
 
-  return <div ref={globeEl} style={{ width: '100%', height: '100%' }} />
+  return (
+    <div
+      ref={globeEl}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    />
+  )
 }
 
-// --- Huvudkomponenten ---
+// --- Huvudkomponent ---
 export default function Home() {
   return (
     <main
@@ -116,12 +128,12 @@ export default function Home() {
         NextMomentia
       </h1>
 
-      {/* Partiklar i bakgrunden */}
+      {/* Partiklar */}
       <Canvas camera={{ position: [0, 0, 3.5] }}>
         <ParticleField />
       </Canvas>
 
-      {/* Själva globen */}
+      {/* Globen */}
       <div
         style={{
           position: 'absolute',
@@ -149,4 +161,5 @@ export default function Home() {
     </main>
   )
 }
+
 
