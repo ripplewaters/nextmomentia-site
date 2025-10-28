@@ -58,17 +58,17 @@ function GlobeOutline() {
       const Globe = GlobeModule.default
       const globe = new Globe(globeEl.current!)
 
-      globe
-        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-        .showGraticules(true)
-        .showAtmosphere(true)
-        .atmosphereColor('#80bfff')
-        .atmosphereAltitude(0.25)
-        .polygonCapColor(() => 'rgba(255,255,255,0.05)')
-        .polygonSideColor(() => 'rgba(255,255,255,0.2)')
-        .polygonStrokeColor(() => '#ffffff')
-        .backgroundColor('#040224')
+     globe
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+      .showGraticules(true)
+      .showAtmosphere(true)
+      .atmosphereColor('#ff4040')       // röd aura
+      .atmosphereAltitude(0.3)
+      .polygonCapColor(() => 'rgba(255,255,255,0.3)')   // ljus yta
+      .polygonSideColor(() => 'rgba(255,255,255,0.15)') // lite djup
+      .polygonStrokeColor(() => '#ff4040')              // röda outlines
+      .backgroundColor('#040224')
 
       globe.controls().enableZoom = false
       globe.controls().autoRotate = true
