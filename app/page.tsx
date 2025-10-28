@@ -68,7 +68,7 @@ function GlobeOutline() {
       .polygonCapColor(() => 'rgba(255,255,255,0.3)')   // ljus yta
       .polygonSideColor(() => 'rgba(255,255,255,0.15)') // lite djup
       .polygonStrokeColor(() => '#ff4040')              // röda outlines
-      .backgroundColor('#040224')
+      .backgroundColor('#ffffffff')
 
       globe.controls().enableZoom = false
       globe.controls().autoRotate = true
