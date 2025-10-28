@@ -14,7 +14,7 @@ export default function Home() {
       alignItems: 'center',
       textAlign: 'center'
     }}>
-      <h1 style={{ fontSize: '3rem', letterSpacing: '2px' }}>⚡ NextMomentia</h1>
+      <h1 style={{ fontSize: '3rem', letterSpacing: '2px' }}>NextMomentia</h1>
       <p style={{ fontSize: '1.2rem', maxWidth: '600px', opacity: 0.8 }}>
         DON'T JUST WATCH. REACT.
       </p>
@@ -33,7 +33,7 @@ export default function Home() {
           transition: '0.2s ease-in-out'
         }}
       >
-        🔴 Watch on YouTube
+        🔵 Watch on YouTube
       </a>
     </main>
   )
