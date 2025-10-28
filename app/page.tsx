@@ -1,21 +1,19 @@
 'use client'
 
 import { Space_Grotesk } from 'next/font/google'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useEffect, useRef, useMemo } from 'react'
+import Globe from 'globe.gl'
 import * as THREE from 'three'
-import { useRef, useMemo } from 'react'
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['700'],
 })
 
-// --- Partikelfält (frikopplat från kameran) ---
+// --- Partikelfält (samma som innan) ---
 function ParticleField() {
   const pointsRef = useRef<THREE.Points>(null!)
-
   const particles = useMemo(() => {
     const count = 1000
     const positions = new Float32Array(count * 3)
@@ -24,7 +22,6 @@ function ParticleField() {
     }
     return positions
   }, [])
-
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
     if (pointsRef.current) {
@@ -32,7 +29,6 @@ function ParticleField() {
       pointsRef.current.rotation.x = Math.sin(t * 0.05) * 0.02
     }
   })
-
   return (
     <group position={[0, 0, -4]}>
       <points ref={pointsRef}>
@@ -51,31 +47,35 @@ function ParticleField() {
   )
 }
 
-// --- Ny, enkel och fungerande Glow-Earth baserad på din inverterade textur ---
-function GlowEarth() {
-  const earthRef = useRef<THREE.Mesh>(null!)
-  const map = useLoader(THREE.TextureLoader, '/textures/earth_bw_inv.jpg')
+// --- Ny Globe.gl-komponent ---
+function GlobeOutline() {
+  const globeEl = useRef<HTMLDivElement>(null)
 
-  useFrame(() => {
-    if (earthRef.current) earthRef.current.rotation.y += 0.0015
-  })
+  useEffect(() => {
+    if (!globeEl.current) return
 
-  return (
-    <mesh ref={earthRef}>
-      <sphereGeometry args={[1, 128, 128]} />
-      <meshStandardMaterial
-        map={map}
-        color="#ffffff"
-        emissive="#ffffff"
-        emissiveIntensity={2.2}
-        roughness={0.2}
-        metalness={0.1}
-        transparent
-        opacity={0.95}
-        toneMapped={false}
-      />
-    </mesh>
-  )
+    const globe = Globe()(globeEl.current)
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+      .showGraticules(true)
+      .showAtmosphere(true)
+      .atmosphereColor('#80bfff')
+      .atmosphereAltitude(0.15)
+      .polygonCapColor(() => 'rgba(255,255,255,0.05)')
+      .polygonSideColor(() => 'rgba(255,255,255,0.2)')
+      .polygonStrokeColor(() => '#ffffff')
+
+    globe.controls().enableZoom = false
+    globe.controls().autoRotate = true
+    globe.controls().autoRotateSpeed = 0.8
+    globe.width(600).height(600)
+
+    return () => {
+      if (globe) globeEl.current?.replaceChildren()
+    }
+  }, [])
+
+  return <div ref={globeEl} style={{ width: '100%', height: '100%' }} />
 }
 
 // --- Huvudkomponenten ---
@@ -115,26 +115,24 @@ export default function Home() {
         NextMomentia
       </h1>
 
+      {/* Partiklar i bakgrunden */}
       <Canvas camera={{ position: [0, 0, 3.5] }}>
-        {/* Bakgrunds-element */}
-        <ambientLight intensity={0.8} />
-        <pointLight position={[3, 3, 5]} intensity={1.6} />
-
-        <ParticleField /> {/* ← Partiklar som inte påverkas av orbit */}
-        <group>
-          <GlowEarth /> {/* ← Globen som kan roteras */}
-          <OrbitControls enableZoom={false} autoRotate={false} />
-        </group>
-
-        <EffectComposer>
-          <Bloom
-            intensity={1.3}
-            luminanceThreshold={0.0}
-            luminanceSmoothing={1.2}
-            height={400}
-          />
-        </EffectComposer>
+        <ParticleField />
       </Canvas>
+
+      {/* Själva globen */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <GlobeOutline />
+      </div>
 
       <p
         style={{
