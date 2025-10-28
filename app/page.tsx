@@ -52,28 +52,29 @@ function GlobeOutline() {
   const globeEl = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!globeEl.current) return
+  // Kör bara i browsern
+  if (typeof window === 'undefined' || !globeEl.current) return
 
-    const globe = new Globe(globeEl.current)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-      .showGraticules(true)
-      .showAtmosphere(true)
-      .atmosphereColor('#80bfff')
-      .atmosphereAltitude(0.15)
-      .polygonCapColor(() => 'rgba(255,255,255,0.05)')
-      .polygonSideColor(() => 'rgba(255,255,255,0.2)')
-      .polygonStrokeColor(() => '#ffffff')
+  const globe = new Globe(globeEl.current)
+    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+    .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+    .showGraticules(true)
+    .showAtmosphere(true)
+    .atmosphereColor('#80bfff')
+    .atmosphereAltitude(0.15)
+    .polygonCapColor(() => 'rgba(255,255,255,0.05)')
+    .polygonSideColor(() => 'rgba(255,255,255,0.2)')
+    .polygonStrokeColor(() => '#ffffff')
 
-    globe.controls().enableZoom = false
-    globe.controls().autoRotate = true
-    globe.controls().autoRotateSpeed = 0.8
-    globe.width(600).height(600)
+  globe.controls().enableZoom = false
+  globe.controls().autoRotate = true
+  globe.controls().autoRotateSpeed = 0.8
+  globe.width(600).height(600)
 
-    return () => {
-      if (globe) globeEl.current?.replaceChildren()
-    }
-  }, [])
+  return () => {
+    globeEl.current?.replaceChildren()
+  }
+}, [])
 
   return <div ref={globeEl} style={{ width: '100%', height: '100%' }} />
 }
