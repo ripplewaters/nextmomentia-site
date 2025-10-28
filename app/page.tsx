@@ -54,7 +54,7 @@ function GlobeOutline() {
   useEffect(() => {
     if (!globeEl.current) return
 
-    const globe = Globe()(globeEl.current)
+    const globe = new Globe(globeEl.current)
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
       .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
       .showGraticules(true)
