@@ -1,12 +1,11 @@
+'use client'
+
 import { Space_Grotesk } from 'next/font/google'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['700'],
 })
-
-
-'use client'
 
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei'
