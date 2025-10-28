@@ -59,12 +59,18 @@ function ParticleField() {
 function EnergyGlobe() {
   const outerRef = useRef<THREE.Mesh>(null!)
   const innerRef = useRef<THREE.Mesh>(null!)
+  const continentsRef = useRef<THREE.Mesh>(null!)
+
+  // Samma textur du redan använder
   const map = useLoader(THREE.TextureLoader, '/textures/earth_bw.jpg')
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
     if (outerRef.current) outerRef.current.rotation.y += 0.0015
     if (innerRef.current) innerRef.current.rotation.y -= 0.001
+    if (continentsRef.current) continentsRef.current.rotation.y += 0.0015
+
+    // Pulsande ljus i kärnan
     const glow = 0.3 + Math.sin(t * 2) * 0.25
     if (innerRef.current?.material instanceof THREE.MeshStandardMaterial) {
       innerRef.current.material.emissiveIntensity = glow
@@ -73,6 +79,7 @@ function EnergyGlobe() {
 
   return (
     <>
+      {/* Yttre blå mesh */}
       <mesh ref={outerRef}>
         <sphereGeometry args={[1.05, 64, 64]} />
         <meshStandardMaterial
@@ -86,17 +93,31 @@ function EnergyGlobe() {
         />
       </mesh>
 
+      {/* Inre vit glöd */}
       <mesh ref={innerRef}>
         <sphereGeometry args={[0.98, 128, 128]} />
         <meshStandardMaterial
           color="#ffffff"
           emissive="#80bfff"
-          emissiveIntensity={0.5}
+          emissiveIntensity={0.6}
           roughness={0.3}
           metalness={0.2}
           transparent
           opacity={0.6}
           toneMapped={false}
+        />
+      </mesh>
+
+      {/* 🌍 Nytt lager: ljusstarka kontinenter */}
+      <mesh ref={continentsRef}>
+        <sphereGeometry args={[1.02, 128, 128]} />
+        <meshStandardMaterial
+          map={map}
+          emissive="#ffffff"
+          emissiveIntensity={1.5}
+          color="#ffffff"
+          transparent
+          opacity={0.9}
         />
       </mesh>
     </>
