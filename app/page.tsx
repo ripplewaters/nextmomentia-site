@@ -1,7 +1,7 @@
 'use client'
 
 import { Space_Grotesk } from 'next/font/google'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef, useMemo } from 'react'
@@ -12,16 +12,15 @@ const spaceGrotesk = Space_Grotesk({
   weight: ['700'],
 })
 
-// --- Partikelfältet ---
+// --- Partikelfält (frikopplat från kameran) ---
 function ParticleField() {
   const pointsRef = useRef<THREE.Points>(null!)
 
-  // skapa tusentals punkter
   const particles = useMemo(() => {
-    const count = 1200
+    const count = 1000
     const positions = new Float32Array(count * 3)
     for (let i = 0; i < count * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 6 // sprid ut runt globen
+      positions[i] = (Math.random() - 0.5) * 10
     }
     return positions
   }, [])
@@ -29,39 +28,34 @@ function ParticleField() {
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = t * 0.05
-      pointsRef.current.rotation.x = Math.sin(t * 0.1) * 0.05
+      pointsRef.current.rotation.y = t * 0.01
+      pointsRef.current.rotation.x = Math.sin(t * 0.05) * 0.02
     }
   })
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        {/* 🔧 FIX: lägg till args i stället för separata props */}
-        <bufferAttribute
-          attach="attributes-position"
-          args={[particles, 3]} // [array, itemSize]
-          count={particles.length / 3}
+    <group position={[0, 0, -4]}>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[particles, 3]} />
+        </bufferGeometry>
+        <pointsMaterial
+          color="#80bfff"
+          size={0.025}
+          sizeAttenuation
+          transparent
+          opacity={0.25}
         />
-      </bufferGeometry>
-      <pointsMaterial
-        color="#80bfff"
-        size={0.02}
-        sizeAttenuation
-        transparent
-        opacity={0.8}
-      />
-    </points>
+      </points>
+    </group>
   )
 }
 
-// --- Globen ---
+// --- Globen med tydliga kontinenter ---
 function EnergyGlobe() {
   const outerRef = useRef<THREE.Mesh>(null!)
   const innerRef = useRef<THREE.Mesh>(null!)
   const continentsRef = useRef<THREE.Mesh>(null!)
-
-  // Samma textur du redan använder
   const map = useLoader(THREE.TextureLoader, '/textures/earth_bw.jpg')
 
   useFrame(({ clock }) => {
@@ -69,8 +63,6 @@ function EnergyGlobe() {
     if (outerRef.current) outerRef.current.rotation.y += 0.0015
     if (innerRef.current) innerRef.current.rotation.y -= 0.001
     if (continentsRef.current) continentsRef.current.rotation.y += 0.0015
-
-    // Pulsande ljus i kärnan
     const glow = 0.3 + Math.sin(t * 2) * 0.25
     if (innerRef.current?.material instanceof THREE.MeshStandardMaterial) {
       innerRef.current.material.emissiveIntensity = glow
@@ -88,60 +80,39 @@ function EnergyGlobe() {
           emissive="#66ccff"
           emissiveIntensity={0.8}
           transparent
-          opacity={0.15}
+          opacity={0.1}
           wireframe
         />
       </mesh>
 
-      {/* Inre vit glöd */}
+      {/* Inre glöd */}
       <mesh ref={innerRef}>
         <sphereGeometry args={[0.98, 128, 128]} />
         <meshStandardMaterial
           color="#ffffff"
           emissive="#80bfff"
-          emissiveIntensity={0.6}
+          emissiveIntensity={0.4}
           roughness={0.3}
           metalness={0.2}
           transparent
-          opacity={0.6}
+          opacity={0.7}
           toneMapped={false}
         />
       </mesh>
 
-      {/* 🌍 Nytt lager: ljusstarka kontinenter */}
+      {/* Kontinentoverlay */}
       <mesh ref={continentsRef}>
         <sphereGeometry args={[1.02, 128, 128]} />
         <meshStandardMaterial
           map={map}
           emissive="#ffffff"
-          emissiveIntensity={1.5}
+          emissiveIntensity={1.8}
           color="#ffffff"
           transparent
-          opacity={0.9}
+          opacity={0.95}
         />
       </mesh>
     </>
-  )
-}
-
-// --- Bakgrunds-lager (mjuk gradient som pulserar) ---
-function AnimatedBackground() {
-  const meshRef = useRef<THREE.Mesh>(null!)
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime
-    if (meshRef.current?.material instanceof THREE.MeshBasicMaterial) {
-      const c1 = new THREE.Color(0x040224)
-      const c2 = new THREE.Color(0x0b1358)
-      const mix = (Math.sin(t * 0.3) + 1) / 2
-      meshRef.current.material.color.copy(c1).lerp(c2, mix)
-    }
-  })
-
-  return (
-    <mesh ref={meshRef} scale={[50, 50, 1]} position={[0, 0, -10]}>
-      <planeGeometry args={[2, 2]} />
-      <meshBasicMaterial color="#040224" />
-    </mesh>
   )
 }
 
@@ -183,18 +154,19 @@ export default function Home() {
       </h1>
 
       <Canvas camera={{ position: [0, 0, 3.5] }}>
+        {/* Bakgrunds-element */}
         <ambientLight intensity={0.8} />
         <pointLight position={[3, 3, 5]} intensity={1.6} />
 
-        <AnimatedBackground /> {/* ← rörlig bakgrund */}
-        <ParticleField />      {/* ← partiklar */}
-        <EnergyGlobe />        {/* ← globen */}
-
-        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.1} />
+        <ParticleField /> {/* ← Partiklar som inte påverkas av orbit */}
+        <group>
+          <EnergyGlobe /> {/* ← Globen som kan roteras */}
+          <OrbitControls enableZoom={false} autoRotate={false} />
+        </group>
 
         <EffectComposer>
           <Bloom
-            intensity={1.3}
+            intensity={1.2}
             luminanceThreshold={0.0}
             luminanceSmoothing={1.2}
             height={400}
@@ -211,7 +183,7 @@ export default function Home() {
           zIndex: 10,
         }}
       >
-        DON'T JUST WATCH. REACT 🌐
+        DON'T JUST WATCH. REACT.
       </p>
     </main>
   )
