@@ -81,23 +81,23 @@ function GlobeOutline() {
       const globe = new Globe(container)
 
       globe
-        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-        .showGraticules(true)
-        .showAtmosphere(true)
-        .atmosphereColor('#ff4040')
-        .atmosphereAltitude(0.3)
-        .polygonCapColor(() => 'rgba(255,255,255,0.3)')
-        .polygonSideColor(() => 'rgba(255,255,255,0.15)')
-        .polygonStrokeColor(() => '#ff4040')
-        .backgroundColor('#040224')
+      .globeImageUrl('') // Ingen bakgrundsbild
+      .bumpImageUrl('')
+      .showGraticules(false)
+      .showAtmosphere(true)
+      .atmosphereColor('#ffffff')
+      .atmosphereAltitude(0.18)
+      .backgroundColor('#040224')
+      .polygonCapColor(() => 'rgba(255,255,255,0.95)') // Vita kontinenter
+      .polygonSideColor(() => 'rgba(255,255,255,0.15)') // Mjuk ljus kant
+      .polygonStrokeColor(() => 'rgba(255,255,255,0.35)') // Tunn vit linje
 
       const material = globe.globeMaterial() as THREE.MeshPhongMaterial
-      material.color = new THREE.Color('#f3f6ff')
-      material.emissive = new THREE.Color('#ffffff')
-      material.emissiveIntensity = 0.55
+      material.color = new THREE.Color('#0a0a1a') // mörk bas (havet)
+      material.emissive = new THREE.Color('#000000') // ingen glöd
+      material.emissiveIntensity = 0
       material.specular = new THREE.Color('#ffffff')
-      material.shininess = 35
+      material.shininess = 25
 
       fetch(
         'https://unpkg.com/three-globe/example/datasets/ne_110m_admin_0_countries.geojson'
@@ -241,7 +241,7 @@ export default function Home() {
             alignItems: 'center',
             gap: '1rem',
             fontSize: '0.85rem',
-            letterSpacing: '0.16em',
+            letterSpacing: '-0.2em',
             textTransform: 'uppercase',
           }}
         >
