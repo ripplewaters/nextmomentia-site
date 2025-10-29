@@ -279,7 +279,7 @@ export default function Home() {
           position: 'absolute',
           top: '17%',
           textAlign: 'center',
-          fontSize: '3rem',
+          fontSize: '1rem',
           fontWeight: '700',
           letterSpacing: '-1.5px',
           background: 'linear-gradient(90deg, #ffffff 0%, #d8f1ff 100%)',
