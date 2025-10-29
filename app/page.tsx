@@ -81,12 +81,12 @@ function GlobeOutline() {
       const globe = new Globe(container)
 
       globe
-      .globeImageUrl('') // Ingen bakgrundsbild
+      .globeImageUrl('/textures/earth_bw_inv.jpg') // Ingen bakgrundsbild
       .bumpImageUrl('')
       .showGraticules(false)
       .showAtmosphere(true)
       .atmosphereColor('#ffffff')
-      .atmosphereAltitude(0.18)
+      .atmosphereAltitude(0.25)
       .backgroundColor('#040224')
       .polygonCapColor(() => 'rgba(255,255,255,0.95)') // Vita kontinenter
       .polygonSideColor(() => 'rgba(255,255,255,0.15)') // Mjuk ljus kant
