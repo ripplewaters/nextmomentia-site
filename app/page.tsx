@@ -62,7 +62,7 @@ function GlobeOutline() {
 
       globe
         // Använd din textur i public/textures
-        .globeImageUrl('/textures/earth_bw24k.jpg')
+        .globeImageUrl('/textures/earth_daymap.jpg')
         .bumpImageUrl('') // ingen bump-map just nu
         .showGraticules(false)
         .showAtmosphere(true)
