@@ -68,6 +68,7 @@ function GlobeOutline() {
       globe
         .globeImageUrl(isDaytime ? dayTexture : nightTexture)
         .bumpImageUrl(bumpTexture)
+        // @ts-ignore - specularImageUrl works at runtime but not typed
         .specularImageUrl(specTexture)
         .showGraticules(false)
         .showAtmosphere(true)
