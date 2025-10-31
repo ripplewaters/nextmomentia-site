@@ -57,11 +57,11 @@ function GlobeOutline() {
       const globe = new Globe(container)
 
       const textures = {
-        day: '/textures/earth_daymap.jpg',
-        night: '/textures/earth_nightmap.jpg',
-        clouds: '/textures/earth_clouds.jpg',
-        bump: '/textures/earthbump1k.jpg',
-        spec: '/textures/earthspec1k.jpg',
+      day: '/textures/earth_daymap.jpg?v=2',
+      night: '/textures/earth_nightmap.jpg?v=2',
+      clouds: '/textures/earth_clouds.jpg?v=2',
+      bump: '/textures/earthbump1k.jpg?v=2',
+      spec: '/textures/earthspec1k.jpg?v=2',
       }
 
       const loader = new THREE.TextureLoader()
