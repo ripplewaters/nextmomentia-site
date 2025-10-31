@@ -160,22 +160,24 @@ export default function Home() {
         </nav>
       </header>
 
-            {/* GLOB */}
+               {/* GLOB */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(70vw, 520px)',   // 👈 responsiv bredd
-          height: 'min(70vw, 520px)',  // 👈 responsiv höjd
+          width: 'min(75vw, 520px)',   // bredd beroende på skärm
+          aspectRatio: '1 / 1',        // håller globen rund
+          overflow: 'visible',         // gör att kanterna inte klipps
           maxWidth: '520px',
-          maxHeight: '520px',
-          minWidth: '280px',
-          minHeight: '280px',
+          minWidth: '260px',
         }}
       >
-        <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+        <Canvas
+          camera={{ position: [0, 0, 6], fov: 45 }}
+          style={{ borderRadius: '50%', background: 'transparent' }}
+        >
           <ambientLight intensity={0.3} />
           <directionalLight
             name="sunLight"
@@ -192,6 +194,7 @@ export default function Home() {
           />
         </Canvas>
       </div>
+
 
 
       {/* FOOTER / CTA */}
