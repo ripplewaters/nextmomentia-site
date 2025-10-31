@@ -29,15 +29,19 @@ function RealisticEarth() {
 
   // ✨ Generera space-particles
   const particles = useMemo(() => {
-    const points = []
-    for (let i = 0; i < 1800; i++) {
-      const x = (Math.random() - 0.5) * 12
-      const y = (Math.random() - 0.5) * 12
-      const z = (Math.random() - 0.5) * 12
-      points.push(x, y, z)
-    }
-    return new Float32Array(points)
-  }, [])
+  const points = []
+  for (let i = 0; i < 1200; i++) {
+    const radius = 15 + Math.random() * 20 // längre ut i rymden
+    const theta = Math.random() * Math.PI * 2
+    const phi = Math.acos(2 * Math.random() - 1)
+    const x = radius * Math.sin(phi) * Math.cos(theta)
+    const y = radius * Math.sin(phi) * Math.sin(theta)
+    const z = radius * Math.cos(phi)
+    points.push(x, y, z)
+  }
+  return new Float32Array(points)
+}, [])
+
 
   // 🔄 Animationer (rotation, ljus, glow, kamera)
   useFrame(({ clock, scene, camera }) => {
@@ -64,25 +68,25 @@ function RealisticEarth() {
 
   return (
     <>
-      {/* ✨ Space Particles */}
+          {/* ✨ Space Particles */}
       <points>
         <bufferGeometry>
-         <bufferAttribute
-          attach="attributes-position"
-          args={[particles, 3]}
+          <bufferAttribute
+            attach="attributes-position"
+            args={[particles, 3] as any}
           />
-
 
         </bufferGeometry>
         <pointsMaterial
-          size={0.015}
+          size={0.01}
           color="#88aaff"
           transparent
-          opacity={0.25}
+          opacity={0.2}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </points>
+
 
       {/* 🌌 Glow-fält bakom jorden */}
       <mesh ref={glowRef} scale={2.9}>
