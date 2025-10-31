@@ -160,18 +160,39 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* GLOB */}
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-        <ambientLight intensity={0.3} />
-        <directionalLight
-          name="sunLight"
-          color={0xffffff}
-          intensity={2.2}
-          position={[5, 0, 5]}
-        />
-        <RealisticEarth />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-      </Canvas>
+            {/* GLOB */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'min(70vw, 520px)',   // 👈 responsiv bredd
+          height: 'min(70vw, 520px)',  // 👈 responsiv höjd
+          maxWidth: '520px',
+          maxHeight: '520px',
+          minWidth: '280px',
+          minHeight: '280px',
+        }}
+      >
+        <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+          <ambientLight intensity={0.3} />
+          <directionalLight
+            name="sunLight"
+            color={0xffffff}
+            intensity={2.2}
+            position={[5, 0, 5]}
+          />
+          <RealisticEarth />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            autoRotate
+            autoRotateSpeed={0.5}
+          />
+        </Canvas>
+      </div>
+
 
       {/* FOOTER / CTA */}
       <section
