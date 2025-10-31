@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useRef, useMemo } from 'react'
+import { useRef } from 'react'
 import { TextureLoader } from 'three'
 import { OrbitControls } from '@react-three/drei'
 import { Space_Grotesk } from 'next/font/google'
@@ -16,7 +16,6 @@ const spaceGrotesk = Space_Grotesk({
 function RealisticEarth() {
   const earthRef = useRef<THREE.Mesh>(null)
   const cloudRef = useRef<THREE.Mesh>(null)
-  const glowRef = useRef<THREE.Mesh>(null)
 
   // Ladda texturer
   const [day, night, bump, spec, clouds] = useLoader(TextureLoader, [
@@ -27,79 +26,20 @@ function RealisticEarth() {
     '/textures/earth_clouds.jpg',
   ])
 
-  // ✨ Generera space-particles
-  const particles = useMemo(() => {
-  const points = []
-  for (let i = 0; i < 1200; i++) {
-    const radius = 15 + Math.random() * 20 // längre ut i rymden
-    const theta = Math.random() * Math.PI * 2
-    const phi = Math.acos(2 * Math.random() - 1)
-    const x = radius * Math.sin(phi) * Math.cos(theta)
-    const y = radius * Math.sin(phi) * Math.sin(theta)
-    const z = radius * Math.cos(phi)
-    points.push(x, y, z)
-  }
-  return new Float32Array(points)
-}, [])
-
-
-  // 🔄 Animationer (rotation, ljus, glow, kamera)
-  useFrame(({ clock, scene, camera }) => {
+  useFrame(({ clock, scene }) => {
     const t = clock.getElapsedTime() * 0.1
     const light = scene.getObjectByName('sunLight') as THREE.DirectionalLight
     if (light) {
       light.position.set(Math.sin(t) * 10, 2, Math.cos(t) * 10)
     }
 
-    // rotation
     if (earthRef.current) earthRef.current.rotation.y += 0.0008
     if (cloudRef.current) cloudRef.current.rotation.y += 0.001
-
-    // glow-puls
-    if (glowRef.current) {
-      const material = glowRef.current.material as THREE.MeshBasicMaterial
-      material.opacity = 0.25 + Math.sin(clock.elapsedTime * 0.6) * 0.1
-      material.color = new THREE.Color(`hsl(${210 + Math.sin(t * 2) * 10}, 100%, 65%)`)
-    }
-
-    // subtil kamerarörelse ("breathing")
-    camera.position.z = 6 + Math.sin(clock.elapsedTime * 0.3) * 0.15
   })
 
   return (
     <>
-          {/* ✨ Space Particles */}
-      <points>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[particles, 3] as any}
-          />
-
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.01}
-          color="#88aaff"
-          transparent
-          opacity={0.2}
-          blending={THREE.AdditiveBlending}
-          depthWrite={false}
-        />
-      </points>
-
-
-      {/* 🌌 Glow-fält bakom jorden */}
-      <mesh ref={glowRef} scale={2.9}>
-        <sphereGeometry args={[1, 64, 64]} />
-        <meshBasicMaterial
-          color="#2266ff"
-          transparent
-          opacity={0.3}
-          blending={THREE.AdditiveBlending}
-        />
-      </mesh>
-
-      {/* 🌍 Jordklotet */}
+      {/* Jordklotet */}
       <mesh ref={earthRef} scale={2.5}>
         <sphereGeometry args={[1, 128, 128]} />
         <meshPhongMaterial
@@ -115,7 +55,7 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* ☁️ Moln */}
+      {/* Moln */}
       <mesh ref={cloudRef} scale={2.53}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshPhongMaterial
@@ -126,7 +66,7 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* 🌫️ Atmosfär */}
+      {/* Atmosfär */}
       <mesh scale={2.55}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
@@ -193,39 +133,51 @@ export default function Home() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '1.2rem',
+            gap: '1rem',
             fontSize: '0.85rem',
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.2em',
             textTransform: 'uppercase',
           }}
         >
-          <a href="#videos" style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}>
+          <a
+            href="#videos"
+            style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          >
             Videos
           </a>
-          <a href="#shop" style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}>
+          <a
+            href="#shop"
+            style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          >
             Shop
           </a>
-          <a href="#about" style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}>
+          <a
+            href="#about"
+            style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          >
             About
           </a>
         </nav>
       </header>
 
-      {/* 🌍 GLOB */}
+            {/* GLOB */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(75vw, 520px)',
-          aspectRatio: '1 / 1',
-          overflow: 'visible',
+          width: 'min(75vw, 520px)',   // bredd beroende på skärm
+          aspectRatio: '1 / 1',        // håller globen rund
+          overflow: 'visible',         // gör att kanterna inte klipps
           maxWidth: '520px',
           minWidth: '260px',
         }}
       >
-        <Canvas camera={{ position: [0, 0, 6], fov: 45 }} style={{ background: 'transparent' }}>
+        <Canvas
+          camera={{ position: [0, 0, 6], fov: 45 }}
+          style={{ borderRadius: '50%', background: 'transparent' }}
+        >
           <ambientLight intensity={0.3} />
           <directionalLight
             name="sunLight"
@@ -234,16 +186,23 @@ export default function Home() {
             position={[5, 0, 5]}
           />
           <RealisticEarth />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            autoRotate
+            autoRotateSpeed={0.5}
+          />
         </Canvas>
       </div>
 
-      {/* CTA */}
+
+      {/* FOOTER / CTA */}
       <section
         style={{
           position: 'absolute',
           bottom: '8%',
           opacity: 0.9,
+          letterSpacing: '-0.5px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -270,7 +229,7 @@ export default function Home() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.8rem 1.8rem',
+            padding: '0.75rem 1.6rem',
             borderRadius: '999px',
             background:
               'linear-gradient(135deg, rgba(130,200,255,0.25) 0%, rgba(255,255,255,0.75) 100%)',
@@ -280,18 +239,17 @@ export default function Home() {
             textDecoration: 'none',
             boxShadow: '0 12px 40px rgba(140,210,255,0.35)',
             backdropFilter: 'blur(6px)',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease, filter 1s ease',
-            filter: 'brightness(1)',
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-4px) scale(1.04)'
-            e.currentTarget.style.boxShadow = '0 20px 60px rgba(170,225,255,0.55)'
-            e.currentTarget.style.filter = 'brightness(1.2)'
+            e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)'
+            e.currentTarget.style.boxShadow =
+              '0 18px 55px rgba(170,225,255,0.45)'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0) scale(1)'
-            e.currentTarget.style.boxShadow = '0 12px 40px rgba(140,210,255,0.35)'
-            e.currentTarget.style.filter = 'brightness(1)'
+            e.currentTarget.style.boxShadow =
+              '0 12px 40px rgba(140,210,255,0.35)'
           }}
         >
           Explore the Channel
