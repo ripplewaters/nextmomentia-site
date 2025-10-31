@@ -41,7 +41,7 @@ function ParticleField() {
   )
 }
 
-/* -------------------- Globe.gl (Day/Night + Clouds + Bump/Specular) -------------------- */
+/* -------------------- Globe.gl -------------------- */
 function GlobeOutline() {
   const globeEl = useRef<HTMLDivElement>(null)
 
@@ -56,43 +56,44 @@ function GlobeOutline() {
       const Globe = GlobeModule.default
       const globe = new Globe(container)
 
-      const hour = new Date().getHours()
-      const isDaytime = hour >= 6 && hour < 18
+      const textures = {
+        day: '/textures/earth_daymap.jpg',
+        night: '/textures/earth_nightmap.jpg',
+        clouds: '/textures/earth_clouds.jpg',
+        bump: '/textures/earthbump1k.jpg',
+        spec: '/textures/earthspec1k.jpg',
+      }
 
-      const dayTexture = '/textures/earth_daymap.jpg'
-      const nightTexture = '/textures/earth_nightmap.jpg'
-      const cloudsTexture = '/textures/earth_clouds.jpg'
-      const bumpTexture = '/textures/earthbump1k.jpg'
-      const specTexture = '/textures/earthspec1k.jpg'
+      const loader = new THREE.TextureLoader()
 
+      // Grundinställning
       globe
-        .globeImageUrl(isDaytime ? dayTexture : nightTexture)
-        .bumpImageUrl(bumpTexture)
-        // @ts-ignore - specularImageUrl works at runtime but not typed
-        .specularImageUrl(specTexture)
+        .globeImageUrl(textures.day)
+        .bumpImageUrl(textures.bump)
+        // @ts-ignore - specular map stöds men saknas i typer
+        .specularImageUrl(textures.spec)
         .showGraticules(false)
         .showAtmosphere(true)
-        .atmosphereColor('#a8cfff')
-        .atmosphereAltitude(0.28)
+        .atmosphereColor('#9fcaff')
+        .atmosphereAltitude(0.3)
         .backgroundColor('#040224')
 
-      // --- Materialjustering ---
+      // Material
       const material = globe.globeMaterial() as THREE.MeshPhongMaterial
       material.color = new THREE.Color('#0a0a1a')
-      material.specular = new THREE.Color('#a0caff')
+      material.specular = new THREE.Color('#9fd4ff')
       material.shininess = 45
 
-      // --- Cloud layer ---
-      const textureLoader = new THREE.TextureLoader()
-      const cloudTexture = textureLoader.load(cloudsTexture)
-      const cloudGeometry = new THREE.SphereGeometry(100, 64, 64)
-      const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: cloudTexture,
+      // --- Moln ---
+      const cloudTex = loader.load(textures.clouds)
+      const cloudGeo = new THREE.SphereGeometry(100, 64, 64)
+      const cloudMat = new THREE.MeshPhongMaterial({
+        map: cloudTex,
         transparent: true,
         opacity: 0.35,
         depthWrite: false,
       })
-      const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial)
+      const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat)
       cloudMesh.scale.set(1.013, 1.013, 1.013)
       globe.scene().add(cloudMesh)
 
@@ -103,21 +104,39 @@ function GlobeOutline() {
       }
       animateClouds()
 
+      // --- Dynamisk belysning (solrörelse) ---
+      const ambientLight = new THREE.AmbientLight(0x202040, 0.4)
+      const sunLight = new THREE.DirectionalLight(0xffffff, 1.1)
+      globe.scene().add(ambientLight)
+      globe.scene().add(sunLight)
+
+      const updateSunPosition = () => {
+        const now = new Date()
+        const hours = now.getHours() + now.getMinutes() / 60
+        const angle = (hours / 24) * Math.PI * 2
+        const radius = 200
+        sunLight.position.set(
+          Math.cos(angle) * radius,
+          Math.sin(angle * 0.7) * radius * 0.3,
+          Math.sin(angle) * radius
+        )
+        requestAnimationFrame(updateSunPosition)
+      }
+      updateSunPosition()
+
       // --- Länder / polygoner ---
       const res = await fetch(
         'https://unpkg.com/three-globe/example/datasets/ne_110m_admin_0_countries.geojson'
       )
-      const countries = (await res.json()) as CountryCollection
+      const countries = await res.json()
       globe
         .polygonsData(countries.features)
-        .polygonCapColor(() => 'rgba(255,255,255,0.15)')
+        .polygonCapColor(() => 'rgba(255,255,255,0.1)')
         .polygonSideColor(() => 'rgba(160,210,255,0.12)')
         .polygonStrokeColor(() => '#9fd4ff')
-
       globe.labelsData([])
 
-
-      // --- Kamerakontroller ---
+      // --- Kontroller ---
       globe.controls().enableZoom = false
       globe.controls().autoRotate = true
       globe.controls().autoRotateSpeed = 0.8
@@ -132,6 +151,28 @@ function GlobeOutline() {
       resize()
       const ro = new ResizeObserver(resize)
       ro.observe(container)
+
+      // --- Day/Night blend ---
+      const updateLighting = () => {
+        const hour = new Date().getHours()
+        const blend = hour < 6 ? 0 : hour < 18 ? 1 : 1 - (hour - 18) / 12
+        const dayTex = loader.load(textures.day)
+        const nightTex = loader.load(textures.night)
+        const canvas = document.createElement('canvas')
+        canvas.width = 2048
+        canvas.height = 1024
+        const ctx = canvas.getContext('2d')!
+        ctx.globalAlpha = 1
+        ctx.drawImage(dayTex.image, 0, 0)
+        ctx.globalAlpha = 1 - blend
+        ctx.drawImage(nightTex.image, 0, 0)
+        const blended = new THREE.CanvasTexture(canvas)
+        const globeMat = globe.globeMaterial() as THREE.MeshPhongMaterial
+        globeMat.map = blended
+        globeMat.needsUpdate = true
+
+      }
+      setTimeout(updateLighting, 1500)
 
       return () => {
         isMounted = false
@@ -159,7 +200,7 @@ function GlobeOutline() {
   )
 }
 
-/* -------------------- Nav & Layout -------------------- */
+/* -------------------- Navigation & Layout -------------------- */
 const navItems = [
   { label: 'Videos', href: '#videos' },
   { label: 'Shop', href: '#shop' },
