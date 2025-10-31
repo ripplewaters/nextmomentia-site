@@ -9,11 +9,6 @@ import type { CSSProperties } from 'react'
 type CountryFeature = { properties: { NAME: string }; [key: string]: unknown }
 type CountryCollection = { features: CountryFeature[] }
 
-const pseudoRandom = (seed: number) => {
-  const x = Math.sin(seed * 12.9898) * 43758.5453
-  return x - Math.floor(x)
-}
-
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], weight: ['700'] })
 
 /* -------------------- Partikelfält -------------------- */
@@ -22,15 +17,16 @@ function ParticleField() {
   const particles = useMemo(() => {
     const count = 1000
     const positions = new Float32Array(count * 3)
-    for (let i = 0; i < count * 3; i++) positions[i] = (pseudoRandom(i) - 0.5) * 10
+    for (let i = 0; i < count * 3; i++) positions[i] = (Math.random() - 0.5) * 10
     return positions
   }, [])
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
-    if (!pointsRef.current) return
-    pointsRef.current.rotation.y = t * 0.01
-    pointsRef.current.rotation.x = Math.sin(t * 0.05) * 0.02
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y = t * 0.01
+      pointsRef.current.rotation.x = Math.sin(t * 0.05) * 0.02
+    }
   })
 
   return (
@@ -45,7 +41,7 @@ function ParticleField() {
   )
 }
 
-/* -------------------- Globe.gl (client-only) -------------------- */
+/* -------------------- Globe.gl (Day/Night + Clouds + Bump/Specular) -------------------- */
 function GlobeOutline() {
   const globeEl = useRef<HTMLDivElement>(null)
 
@@ -56,65 +52,95 @@ function GlobeOutline() {
 
     ;(async () => {
       const GlobeModule = await import('globe.gl')
-      if (!isMounted || !container) return
+      if (!isMounted) return
       const Globe = GlobeModule.default
       const globe = new Globe(container)
 
+      const hour = new Date().getHours()
+      const isDaytime = hour >= 6 && hour < 18
+
+      const dayTexture = '/textures/earth_daymap.jpg'
+      const nightTexture = '/textures/earth_nightmap.jpg'
+      const cloudsTexture = '/textures/earth_clouds.jpg'
+      const bumpTexture = '/textures/earthbump1k.jpg'
+      const specTexture = '/textures/earthspec1k.jpg'
+
       globe
-        // Använd din textur i public/textures
-        .globeImageUrl('/textures/earth_daymap.jpg')
-        .bumpImageUrl('') // ingen bump-map just nu
+        .globeImageUrl(isDaytime ? dayTexture : nightTexture)
+        .bumpImageUrl(bumpTexture)
+        .specularImageUrl(specTexture)
         .showGraticules(false)
         .showAtmosphere(true)
-        .atmosphereColor('#9fcaff')
-        .atmosphereAltitude(0.25)
+        .atmosphereColor('#a8cfff')
+        .atmosphereAltitude(0.28)
         .backgroundColor('#040224')
 
-      // Hav/material
+      // --- Materialjustering ---
       const material = globe.globeMaterial() as THREE.MeshPhongMaterial
-      material.color = new THREE.Color('#0b1120') // mörkblå bas
-      material.emissive = new THREE.Color('#000000') // ingen glöd
-      material.emissiveIntensity = 0
-      material.specular = new THREE.Color('#ffffff')
-      material.shininess = 30
+      material.color = new THREE.Color('#0a0a1a')
+      material.specular = new THREE.Color('#a0caff')
+      material.shininess = 45
 
-      // Länder – subtila kanter så det känns realistiskt
+      // --- Cloud layer ---
+      const textureLoader = new THREE.TextureLoader()
+      const cloudTexture = textureLoader.load(cloudsTexture)
+      const cloudGeometry = new THREE.SphereGeometry(100, 64, 64)
+      const cloudMaterial = new THREE.MeshPhongMaterial({
+        map: cloudTexture,
+        transparent: true,
+        opacity: 0.35,
+        depthWrite: false,
+      })
+      const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial)
+      cloudMesh.scale.set(1.013, 1.013, 1.013)
+      globe.scene().add(cloudMesh)
+
+      const animateClouds = () => {
+        if (!isMounted) return
+        cloudMesh.rotation.y += 0.0006
+        requestAnimationFrame(animateClouds)
+      }
+      animateClouds()
+
+      // --- Länder / polygoner ---
       const res = await fetch(
         'https://unpkg.com/three-globe/example/datasets/ne_110m_admin_0_countries.geojson'
       )
       const countries = (await res.json()) as CountryCollection
-      if (!isMounted) return
       globe
         .polygonsData(countries.features)
-        .polygonCapColor(() => 'rgba(255,255,255,0.35)')
-        .polygonSideColor(() => 'rgba(160,210,255,0.22)')
-        .polygonStrokeColor(() => '#b5ddff')
+        .polygonCapColor(() => 'rgba(255,255,255,0.15)')
+        .polygonSideColor(() => 'rgba(160,210,255,0.12)')
+        .polygonStrokeColor(() => '#9fd4ff')
 
-      // Controls
+      globe.labelsData([])
+
+
+      // --- Kamerakontroller ---
       globe.controls().enableZoom = false
       globe.controls().autoRotate = true
-      globe.controls().autoRotateSpeed = 0.9
+      globe.controls().autoRotateSpeed = 0.8
       globe.controls().enableDamping = true
       globe.controls().dampingFactor = 0.08
 
-      // Storlek – följ container
-      const setSize = () => {
+      // --- Anpassa storlek ---
+      const resize = () => {
         const { clientWidth, clientHeight } = container
         globe.width(Math.min(clientWidth, clientHeight)).height(Math.min(clientWidth, clientHeight))
       }
-      setSize()
-      const ro = new ResizeObserver(setSize)
+      resize()
+      const ro = new ResizeObserver(resize)
       ro.observe(container)
 
-      // Cleanup
       return () => {
+        isMounted = false
         ro.disconnect()
       }
     })()
 
     return () => {
       isMounted = false
-      container.replaceChildren()
+      globeEl.current?.replaceChildren()
     }
   }, [])
 
@@ -132,7 +158,7 @@ function GlobeOutline() {
   )
 }
 
-/* -------------------- Nav styles -------------------- */
+/* -------------------- Nav & Layout -------------------- */
 const navItems = [
   { label: 'Videos', href: '#videos' },
   { label: 'Shop', href: '#shop' },
@@ -161,7 +187,7 @@ const navUnderlineBaseStyle: CSSProperties = {
   pointerEvents: 'none',
 }
 
-/* -------------------- Page -------------------- */
+/* -------------------- Huvudkomponent -------------------- */
 export default function Home() {
   const [hoveredNavIndex, setHoveredNavIndex] = useState<number | null>(null)
   const handleNavFocus = useCallback((index: number) => setHoveredNavIndex(index), [])
@@ -182,6 +208,7 @@ export default function Home() {
         overflow: 'hidden',
       }}
     >
+      {/* Header */}
       <header
         style={{
           position: 'absolute',
@@ -232,8 +259,6 @@ export default function Home() {
                 style={{ ...navLinkBaseStyle, ...(isHovered ? navLinkHoverStyle : null) }}
                 onMouseEnter={() => handleNavFocus(index)}
                 onMouseLeave={resetNavFocus}
-                onFocus={() => handleNavFocus(index)}
-                onBlur={resetNavFocus}
               >
                 {label}
                 <span style={{ ...navUnderlineBaseStyle, transform: `scaleX(${isHovered ? 1 : 0})` }} />
@@ -243,6 +268,7 @@ export default function Home() {
         </nav>
       </header>
 
+      {/* Titel */}
       <h1
         className={spaceGrotesk.className}
         style={{
@@ -262,14 +288,14 @@ export default function Home() {
         NextMomentia
       </h1>
 
-      {/* Partiklar bakom allt */}
+      {/* Partiklar */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
         <Canvas camera={{ position: [0, 0, 3.5] }}>
           <ParticleField />
         </Canvas>
       </div>
 
-      {/* Globen i mitten */}
+      {/* Globen */}
       <div
         style={{
           position: 'absolute',
@@ -283,6 +309,7 @@ export default function Home() {
         <GlobeOutline />
       </div>
 
+      {/* Footer CTA */}
       <section
         style={{
           position: 'absolute',
