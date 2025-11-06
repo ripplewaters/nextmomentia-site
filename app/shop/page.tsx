@@ -1,75 +1,71 @@
 'use client'
 
-// @ts-expect-error - GLTFLoader has no TS types
+// @ts-expect-error - GLTFLoader types missing
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { Center, Environment } from '@react-three/drei'
 import * as THREE from 'three'
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
 
-// 👕 3D-tröjkomponent
-function TShirt({ color, logo }: { color: string; logo: string }) {
-  const model = useLoader(GLTFLoader, '/models/oversized_t-shirt.glb')
-  const logoTexture = useLoader(THREE.TextureLoader, `/textures/${logo}`)
-  const group = useRef<THREE.Group>(null)
+/* === 3D TSHIRT === */
+function TShirt({ color }: { color: string }) {
+  const gltf = useLoader(GLTFLoader, '/models/oversized_t-shirt.glb')
+  const ref = useRef<THREE.Group>(null)
+
+  // långsam rotation
+  useFrame(() => {
+    if (ref.current) ref.current.rotation.y += 0.003
+  })
 
   useEffect(() => {
-    if (!model?.scene) return
-    model.scene.traverse((child: any) => {
+    if (!gltf?.scene) return
+
+    // hitta rätt grupp (Sketchfab-namn)
+    const main = gltf.scene.getObjectByName('Sketchfab_Scene') || gltf.scene
+
+    // centrera & skala lagom
+    const box = new THREE.Box3().setFromObject(main)
+    const center = box.getCenter(new THREE.Vector3())
+    main.position.sub(center)
+    const scale = 2 / Math.max(...box.getSize(new THREE.Vector3()).toArray())
+    main.scale.setScalar(scale * 1.6)
+
+    // applicera tygmaterial
+    main.traverse((child: any) => {
       if (child.isMesh) {
-        // Tvinga fram synligt material oavsett GLB:s inbyggda shader
         child.material = new THREE.MeshPhysicalMaterial({
           color: new THREE.Color(color),
           roughness: 0.55,
-          metalness: 0.05,
+          metalness: 0.1,
           clearcoat: 0.3,
-          clearcoatRoughness: 0.4,
           side: THREE.DoubleSide,
         })
-        child.material.needsUpdate = true
         child.castShadow = true
         child.receiveShadow = true
       }
     })
-  }, [model, color])
-
-  // Långsam rotation
-  useFrame(() => {
-    if (group.current) group.current.rotation.y += 0.002
-  })
+  }, [gltf, color])
 
   return (
-    <group ref={group} scale={1.8}>
-      <primitive object={model.scene} />
-
-      {/* PNG-tryck */}
-      <mesh position={[0, 0.38, 0.52]}>
-        <planeGeometry args={[0.7, 0.38]} />
-        <meshBasicMaterial
-          map={logoTexture}
-          transparent
-          opacity={1}
-          depthWrite={false}
-          depthTest={false}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
+    <group ref={ref}>
+      <Center top disableZ>
+        <primitive object={gltf.scene} />
+      </Center>
     </group>
   )
 }
 
-// 🌌 Shop-sida
+/* === SHOP PAGE === */
 export default function ShopPage() {
   const variants = [
-    { color: '#1e3a8a', logo: 'KinW_v1.png' }, // blå
-    { color: '#b91c1c', logo: 'QE_v1.png' },   // röd
-    { color: '#0f9d58', logo: 'ToC_v1.png' },  // grön
+    { color: '#1e3a8a' }, // blå
+    { color: '#b91c1c' }, // röd
+    { color: '#0f9d58' }, // grön
   ]
-
-  const [index, setIndex] = useState(0)
-  const prev = () => setIndex((i) => (i - 1 + variants.length) % variants.length)
-  const next = () => setIndex((i) => (i + 1) % variants.length)
+  const [i, setI] = useState(0)
+  const prev = () => setI((x) => (x - 1 + variants.length) % variants.length)
+  const next = () => setI((x) => (x + 1) % variants.length)
 
   return (
     <main
@@ -84,12 +80,14 @@ export default function ShopPage() {
         color: 'white',
         fontFamily: '"Space Grotesk", sans-serif',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
       <NavBar />
 
       <h1
         style={{
+          marginTop: '5.5rem',
           fontSize: '1.6rem',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
@@ -103,23 +101,16 @@ export default function ShopPage() {
       </h1>
 
       <div style={{ width: 'min(85vw,580px)', height: '65vh' }}>
-        <Canvas camera={{ position: [0, 0, 3.6], fov: 45 }}>
+        <Canvas camera={{ position: [0, 0.3, 3.5], fov: 45 }} shadows>
           <color attach="background" args={['#040411']} />
 
-          {/* Belysning fixad med rätt props */}
-          <hemisphereLight color="#ffffff" groundColor="#1a1a1a" intensity={0.8} />
-          <directionalLight position={[3, 4, 5]} intensity={2.2} color="#a0c8ff" />
-          <directionalLight position={[-3, 2, -2]} intensity={1.4} color="#ffffff" />
-          <pointLight position={[0, 3, 2]} intensity={1.2} color="#a0c8ff" />
+          {/* Ljus */}
+          <ambientLight intensity={0.9} />
+          <directionalLight position={[2, 4, 5]} intensity={1.8} color="#a0c8ff" />
+          <pointLight position={[0, 1.5, 2]} intensity={1.1} />
+          <Environment preset="studio" />
 
-          <TShirt color={variants[index].color} logo={variants[index].logo} />
-
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            minPolarAngle={Math.PI / 2.05}
-            maxPolarAngle={Math.PI / 2.05}
-          />
+          <TShirt color={variants[i].color} />
         </Canvas>
       </div>
 
@@ -127,7 +118,7 @@ export default function ShopPage() {
       <div
         style={{
           position: 'absolute',
-          bottom: '12%',
+          bottom: '10%',
           display: 'flex',
           gap: '2rem',
           fontSize: '2.2rem',
