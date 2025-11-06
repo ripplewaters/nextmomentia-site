@@ -1,88 +1,58 @@
 'use client'
 
-// @ts-expect-error - GLTFLoader types missing
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { Center, Environment } from '@react-three/drei'
-import * as THREE from 'three'
-import { useEffect, useRef, useState } from 'react'
+import { useState, useEffect } from 'react'
 import NavBar from '../components/NavBar'
 
-/* === 3D TSHIRT === */
-function TShirt({ color }: { color: string }) {
-  const gltf = useLoader(GLTFLoader, '/models/oversized_t-shirt.glb')
-  const ref = useRef<THREE.Group>(null)
-
-  // långsam rotation
-  useFrame(() => {
-    if (ref.current) ref.current.rotation.y += 0.003
-  })
+export default function ShopPage() {
+  const [i] = useState(0)
 
   useEffect(() => {
-    if (!gltf?.scene) return
-
-    // hitta rätt grupp (Sketchfab-namn)
-    const main = gltf.scene.getObjectByName('Sketchfab_Scene') || gltf.scene
-
-    // centrera & skala lagom
-    const box = new THREE.Box3().setFromObject(main)
-    const center = box.getCenter(new THREE.Vector3())
-    main.position.sub(center)
-    const scale = 2 / Math.max(...box.getSize(new THREE.Vector3()).toArray())
-    main.scale.setScalar(scale * 1.6)
-
-    // applicera tygmaterial
-    main.traverse((child: any) => {
-      if (child.isMesh) {
-        child.material = new THREE.MeshPhysicalMaterial({
-          color: new THREE.Color(color),
-          roughness: 0.55,
-          metalness: 0.1,
-          clearcoat: 0.3,
-          side: THREE.DoubleSide,
-        })
-        child.castShadow = true
-        child.receiveShadow = true
-      }
-    })
-  }, [gltf, color])
-
-  return (
-    <group ref={ref}>
-      <Center top disableZ>
-        <primitive object={gltf.scene} />
-      </Center>
-    </group>
-  )
-}
-
-/* === SHOP PAGE === */
-export default function ShopPage() {
-  const variants = [
-    { color: '#1e3a8a' }, // blå
-    { color: '#b91c1c' }, // röd
-    { color: '#0f9d58' }, // grön
-  ]
-  const [i, setI] = useState(0)
-  const prev = () => setI((x) => (x - 1 + variants.length) % variants.length)
-  const next = () => setI((x) => (x + 1) % variants.length)
+    const video = document.querySelector('video')
+    if (video) {
+      video.play().catch(() => {
+        console.log('Autoplay blocked, retrying...')
+        setTimeout(() => video.play().catch(() => {}), 500)
+      })
+    }
+  }, [])
 
   return (
     <main
       style={{
         width: '100vw',
         height: '100vh',
-        background: 'radial-gradient(circle at center, #050515 0%, #000 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: 'black',
         color: 'white',
         fontFamily: '"Space Grotesk", sans-serif',
         position: 'relative',
         overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
+      {/* === VIDEO BACKGROUND ONLY === */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+        }}
+      >
+        <source src="/videos/shop_bg2.mp4" type="video/mp4" />
+      </video>
+
+      {/* === NAV + CONTENT === */}
       <NavBar />
 
       <h1
@@ -91,45 +61,83 @@ export default function ShopPage() {
           fontSize: '1.6rem',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
-          marginBottom: '1.2rem',
+          marginBottom: '2rem',
           background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
+          zIndex: 2,
         }}
       >
         NextMomentia Shop
       </h1>
 
-      <div style={{ width: 'min(85vw,580px)', height: '65vh' }}>
-        <Canvas camera={{ position: [0, 0.3, 3.5], fov: 45 }} shadows>
-          <color attach="background" args={['#040411']} />
-
-          {/* Ljus */}
-          <ambientLight intensity={0.9} />
-          <directionalLight position={[2, 4, 5]} intensity={1.8} color="#a0c8ff" />
-          <pointLight position={[0, 1.5, 2]} intensity={1.1} />
-          <Environment preset="studio" />
-
-          <TShirt color={variants[i].color} />
-        </Canvas>
-      </div>
-
-      {/* PILAR */}
+      {/* SHIRT */}
       <div
         style={{
-          position: 'absolute',
-          bottom: '10%',
+          width: 'min(85vw,580px)',
+          height: '65vh',
           display: 'flex',
-          gap: '2rem',
-          fontSize: '2.2rem',
-          cursor: 'pointer',
-          userSelect: 'none',
-          fontFamily: '"Space Grotesk", monospace',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          zIndex: 2,
         }}
       >
-        <span onClick={prev} style={{ opacity: 0.7 }}>{'<'}</span>
-        <span onClick={next} style={{ opacity: 0.7 }}>{'>'}</span>
+       <img
+  src="/mockups/shirt_blue.png"
+  alt="Question Everything Shirt"
+  style={{
+    width: '78%',
+    height: 'auto',
+    objectFit: 'contain',
+    zIndex: 2,
+    filter: `
+      drop-shadow(0 20px 45px rgba(0,0,0,0.8)) 
+      drop-shadow(0 0 35px rgba(255,255,255,0.15)) 
+      drop-shadow(0 0 80px rgba(173,216,255,0.1))
+    `,
+    animation: 'float 4s ease-in-out infinite',
+    transition: 'filter 0.4s ease-in-out',
+  }}
+/>
+
       </div>
+
+      {/* PRICE TAG */}
+      <div
+        style={{
+          marginTop: '1rem',
+          background:
+            'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '12px',
+          padding: '0.6rem 1.6rem',
+          fontSize: '1.1rem',
+          letterSpacing: '0.05em',
+          color: '#a8d9ff',
+          zIndex: 3,
+          boxShadow:
+            '0 0 20px rgba(168,217,255,0.1), inset 0 0 10px rgba(255,255,255,0.05)',
+        }}
+      >
+        $29 USD
+      </div>
+
+      {/* FLOAT ANIMATION */}
+      <style jsx global>{`
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-8px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+      `}</style>
     </main>
   )
 }

@@ -27,9 +27,11 @@ export default function NavBar() {
         border: '1px solid rgba(160,210,255,0.25)',
         zIndex: 15,
       }}
+      className={spaceGrotesk.className}
     >
-      <span
-        className={spaceGrotesk.className}
+      {/* Klickbar logotyp till startsidan */}
+      <Link
+        href="/"
         style={{
           fontSize: '1.1rem',
           letterSpacing: '0.08em',
@@ -37,11 +39,14 @@ export default function NavBar() {
           background: 'linear-gradient(90deg, #ffffff 0%, #b9e2ff 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
+          fontWeight: 700,
+          textDecoration: 'none',
         }}
       >
         NextMomentia
-      </span>
+      </Link>
 
+      {/* Navigation links */}
       <nav
         style={{
           display: 'flex',
@@ -53,23 +58,48 @@ export default function NavBar() {
       >
         <Link
           href="/#videos"
-          style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          style={{
+            color: 'rgba(255,255,255,0.82)',
+            textDecoration: 'none',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+          }}
         >
           Videos
         </Link>
         <Link
           href="/shop"
-          style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          style={{
+            color: 'rgba(255,255,255,0.82)',
+            textDecoration: 'none',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+          }}
         >
           Shop
         </Link>
         <Link
           href="/#about"
-          style={{ color: 'rgba(255,255,255,0.78)', textDecoration: 'none' }}
+          style={{
+            color: 'rgba(255,255,255,0.82)',
+            textDecoration: 'none',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+          }}
         >
           About
         </Link>
       </nav>
+
+      {/* Global font override */}
+      <style jsx global>{`
+        header,
+        header * {
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.08em !important;
+        }
+      `}</style>
     </header>
   )
 }
