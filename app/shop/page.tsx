@@ -4,13 +4,10 @@ import { useState, useEffect } from 'react'
 import NavBar from '../components/NavBar'
 
 export default function ShopPage() {
-  const [i] = useState(0)
-
   useEffect(() => {
     const video = document.querySelector('video')
     if (video) {
       video.play().catch(() => {
-        console.log('Autoplay blocked, retrying...')
         setTimeout(() => video.play().catch(() => {}), 500)
       })
     }
@@ -32,7 +29,7 @@ export default function ShopPage() {
         justifyContent: 'center',
       }}
     >
-      {/* === VIDEO BACKGROUND ONLY === */}
+      {/* === VIDEO BACKGROUND === */}
       <video
         autoPlay
         loop
@@ -52,13 +49,14 @@ export default function ShopPage() {
         <source src="/videos/shop_bg2.mp4" type="video/mp4" />
       </video>
 
-      {/* === NAV + CONTENT === */}
+      {/* === NAVIGATION === */}
       <NavBar />
 
+      {/* === TITLE === */}
       <h1
         style={{
           marginTop: '5.5rem',
-          fontSize: '1.6rem',
+          fontSize: 'clamp(1.2rem, 2vw + 0.5rem, 1.8rem)',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           marginBottom: '2rem',
@@ -66,16 +64,17 @@ export default function ShopPage() {
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           zIndex: 2,
+          textAlign: 'center',
         }}
       >
         NextMomentia Shop
       </h1>
 
-      {/* SHIRT */}
+      {/* === SHIRT IMAGE === */}
       <div
         style={{
-          width: 'min(85vw,580px)',
-          height: '65vh',
+          width: 'min(90vw, 500px)',
+          height: 'auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -83,37 +82,37 @@ export default function ShopPage() {
           zIndex: 2,
         }}
       >
-       <img
-  src="/mockups/shirt_blue.png"
-  alt="Question Everything Shirt"
-  style={{
-    width: '78%',
-    height: 'auto',
-    objectFit: 'contain',
-    zIndex: 2,
-    filter: `
-      drop-shadow(0 20px 45px rgba(0,0,0,0.8)) 
-      drop-shadow(0 0 35px rgba(255,255,255,0.15)) 
-      drop-shadow(0 0 80px rgba(173,216,255,0.1))
-    `,
-    animation: 'float 4s ease-in-out infinite',
-    transition: 'filter 0.4s ease-in-out',
-  }}
-/>
-
+        <img
+          src="/mockups/shirt_blue.png"
+          alt="Question Everything Shirt"
+          style={{
+            width: '100%',
+            maxWidth: '400px',
+            height: 'auto',
+            objectFit: 'contain',
+            zIndex: 2,
+            filter: `
+              drop-shadow(0 20px 45px rgba(0,0,0,0.8))
+              drop-shadow(0 0 35px rgba(255,255,255,0.15))
+              drop-shadow(0 0 80px rgba(173,216,255,0.1))
+            `,
+            animation: 'float 4s ease-in-out infinite',
+            transition: 'filter 0.4s ease-in-out',
+          }}
+        />
       </div>
 
-      {/* PRICE TAG */}
+      {/* === PRICE TAG === */}
       <div
         style={{
-          marginTop: '1rem',
+          marginTop: '1.2rem',
           background:
             'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))',
           backdropFilter: 'blur(8px)',
           border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: '12px',
           padding: '0.6rem 1.6rem',
-          fontSize: '1.1rem',
+          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
           letterSpacing: '0.05em',
           color: '#a8d9ff',
           zIndex: 3,

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { Space_Grotesk } from 'next/font/google'
 
 const spaceGrotesk = Space_Grotesk({
@@ -9,12 +10,14 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export default function NavBar() {
+  const [open, setOpen] = useState(false)
+
   return (
     <header
       style={{
         position: 'absolute',
         top: '3%',
-        width: 'min(640px, 86%)',
+        width: 'min(640px, 90%)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -29,7 +32,7 @@ export default function NavBar() {
       }}
       className={spaceGrotesk.className}
     >
-      {/* Klickbar logotyp till startsidan */}
+      {/* === LOGO === */}
       <Link
         href="/"
         style={{
@@ -46,8 +49,9 @@ export default function NavBar() {
         NextMomentia
       </Link>
 
-      {/* Navigation links */}
+      {/* === DESKTOP NAV === */}
       <nav
+        className="desktop-nav"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -56,42 +60,65 @@ export default function NavBar() {
           textTransform: 'uppercase',
         }}
       >
-        <Link
-          href="/#videos"
-          style={{
-            color: 'rgba(255,255,255,0.82)',
-            textDecoration: 'none',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-          }}
-        >
+        <Link href="/#videos" style={navLinkStyle}>
           Videos
         </Link>
-        <Link
-          href="/shop"
-          style={{
-            color: 'rgba(255,255,255,0.82)',
-            textDecoration: 'none',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-          }}
-        >
+        <Link href="/shop" style={navLinkStyle}>
           Shop
         </Link>
-        <Link
-          href="/#about"
-          style={{
-            color: 'rgba(255,255,255,0.82)',
-            textDecoration: 'none',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-          }}
-        >
+        <Link href="/#about" style={navLinkStyle}>
           About
         </Link>
       </nav>
 
-      {/* Global font override */}
+      {/* === MOBILE BURGER BUTTON === */}
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'none',
+          background: 'none',
+          border: 'none',
+          color: 'white',
+          fontSize: '1.4rem',
+          cursor: 'pointer',
+        }}
+        className="burger"
+      >
+        ☰
+      </button>
+
+      {/* === MOBILE MENU === */}
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            right: 0,
+            marginTop: '0.5rem',
+            background:
+              'linear-gradient(135deg, rgba(10,16,60,0.9), rgba(60,110,200,0.4))',
+            borderRadius: '12px',
+            padding: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '0.8rem',
+            border: '1px solid rgba(160,210,255,0.25)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          }}
+        >
+          <Link href="/#videos" style={mobileLinkStyle} onClick={() => setOpen(false)}>
+            Videos
+          </Link>
+          <Link href="/shop" style={mobileLinkStyle} onClick={() => setOpen(false)}>
+            Shop
+          </Link>
+          <Link href="/#about" style={mobileLinkStyle} onClick={() => setOpen(false)}>
+            About
+          </Link>
+        </div>
+      )}
+
       <style jsx global>{`
         header,
         header * {
@@ -99,7 +126,31 @@ export default function NavBar() {
           font-weight: 700 !important;
           letter-spacing: 0.08em !important;
         }
+
+        /* RESPONSIVE RULES */
+        @media (max-width: 640px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .burger {
+            display: block !important;
+          }
+        }
       `}</style>
     </header>
   )
+}
+
+const navLinkStyle: React.CSSProperties = {
+  color: 'rgba(255,255,255,0.82)',
+  textDecoration: 'none',
+  fontWeight: 700,
+  letterSpacing: '0.08em',
+}
+
+const mobileLinkStyle: React.CSSProperties = {
+  color: '#b9e2ff',
+  textDecoration: 'none',
+  fontSize: '0.9rem',
+  fontWeight: 700,
 }

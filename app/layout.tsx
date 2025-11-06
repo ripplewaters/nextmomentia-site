@@ -20,7 +20,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "NextMomentia",
-    description: "Explore the world of digital creativity, design & viral culture.",
+    description:
+      "Explore the world of digital creativity, design & viral culture.",
     url: "https://www.nextmomentia.com",
     siteName: "NextMomentia",
     images: [
@@ -51,6 +52,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ overflowX: "hidden", margin: 0, padding: 0 }}
       >
         {children}
       </body>
