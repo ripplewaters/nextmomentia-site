@@ -1,17 +1,28 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 
 export default function ShopPage() {
+  const [isIOS, setIsIOS] = useState(false)
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent.toLowerCase()
+      if (/iphone|ipad|ipod/.test(ua)) {
+        setIsIOS(true)
+      }
+    }
+  }, [])
+
   useEffect(() => {
     const video = document.querySelector('video')
-    if (video) {
+    if (video && !isIOS) {
       video.play().catch(() => {
         setTimeout(() => video.play().catch(() => {}), 500)
       })
     }
-  }, [])
+  }, [isIOS])
 
   return (
     <main
@@ -29,21 +40,8 @@ export default function ShopPage() {
         justifyContent: 'center',
       }}
     >
-      {/* === FIXED VIDEO BACKGROUND === */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
-          zIndex: 0,
-          isolation: 'isolate',
-          mixBlendMode: 'normal',
-          willChange: 'transform',
-        }}
-      >
+      {/* === BACKGROUND (video on desktop, image on iOS) === */}
+      {!isIOS ? (
         <video
           autoPlay
           loop
@@ -51,21 +49,36 @@ export default function ShopPage() {
           playsInline
           preload="auto"
           style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
             objectFit: 'cover',
             zIndex: 0,
-            transform: 'translateZ(0)',
-            WebkitTransform: 'translateZ(0)',
             pointerEvents: 'none',
-            opacity: 0.95,
           }}
         >
           <source src="/videos/shop_bg2.mp4" type="video/mp4" />
         </video>
-      </div>
+      ) : (
+        <img
+          src="/videos/shop_bg_fallback.jpg"
+          alt="Background"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
-      {/* === NAVIGATION === */}
+      {/* === NAVBAR === */}
       <NavBar />
 
       {/* === TITLE === */}
@@ -79,7 +92,7 @@ export default function ShopPage() {
           background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          zIndex: 3,
+          zIndex: 2,
           textAlign: 'center',
           position: 'relative',
         }}
@@ -87,7 +100,7 @@ export default function ShopPage() {
         NextMomentia Shop
       </h1>
 
-      {/* === SHIRT IMAGE === */}
+      {/* === SHIRT === */}
       <div
         style={{
           width: 'min(90vw, 500px)',
@@ -119,7 +132,7 @@ export default function ShopPage() {
         />
       </div>
 
-      {/* === PRICE TAG === */}
+      {/* === PRICE === */}
       <div
         style={{
           marginTop: '1.2rem',
