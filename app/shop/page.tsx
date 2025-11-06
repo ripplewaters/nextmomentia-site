@@ -9,9 +9,7 @@ export default function ShopPage() {
   useEffect(() => {
     if (typeof navigator !== 'undefined') {
       const ua = navigator.userAgent.toLowerCase()
-      if (/iphone|ipad|ipod/.test(ua)) {
-        setIsIOS(true)
-      }
+      if (/iphone|ipad|ipod/.test(ua)) setIsIOS(true)
     }
   }, [])
 
@@ -63,7 +61,7 @@ export default function ShopPage() {
         </video>
       ) : (
         <img
-          src="/videos/shop_bg_fallback.jpg"
+          src="/mockups/shirt_blue.png"
           alt="Background"
           style={{
             position: 'fixed',
@@ -74,6 +72,7 @@ export default function ShopPage() {
             objectFit: 'cover',
             zIndex: 0,
             pointerEvents: 'none',
+            opacity: 0.15,
           }}
         />
       )}
@@ -92,7 +91,7 @@ export default function ShopPage() {
           background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          zIndex: 2,
+          zIndex: 3,
           textAlign: 'center',
           position: 'relative',
         }}
@@ -100,7 +99,7 @@ export default function ShopPage() {
         NextMomentia Shop
       </h1>
 
-      {/* === SHIRT === */}
+      {/* === SHIRT IMAGE (now visible on all iOS) === */}
       <div
         style={{
           width: 'min(90vw, 500px)',
@@ -110,6 +109,9 @@ export default function ShopPage() {
           justifyContent: 'center',
           position: 'relative',
           zIndex: 5,
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          isolation: 'isolate',
         }}
       >
         <img
@@ -122,6 +124,7 @@ export default function ShopPage() {
             objectFit: 'contain',
             position: 'relative',
             zIndex: 5,
+            transform: 'translateZ(0)',
             filter: `
               drop-shadow(0 20px 45px rgba(0,0,0,0.8))
               drop-shadow(0 0 35px rgba(255,255,255,0.15))
@@ -132,7 +135,7 @@ export default function ShopPage() {
         />
       </div>
 
-      {/* === PRICE === */}
+      {/* === PRICE TAG === */}
       <div
         style={{
           marginTop: '1.2rem',
@@ -155,6 +158,7 @@ export default function ShopPage() {
         $29 USD
       </div>
 
+      {/* === FLOAT ANIMATION === */}
       <style jsx global>{`
         @keyframes float {
           0% {
