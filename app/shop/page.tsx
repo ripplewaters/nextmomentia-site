@@ -1,52 +1,61 @@
 'use client'
 
+// @ts-expect-error - GLTFLoader types missing
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-// @ts-expect-error - GLTFLoader has no type declarations, safe to ignore
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
 
 function TShirt({ color, logo }: { color: string; logo: string }) {
-  const model = useLoader(GLTFLoader, '/models/tshirt.glb')
+  const model = useLoader(GLTFLoader, '/models/oversized_t-shirt.glb')
   const logoTexture = useLoader(THREE.TextureLoader, `/textures/${logo}`)
   const group = useRef<THREE.Group>(null)
 
-  // Rotera lätt för dynamik
+  // Rotation
   useFrame(() => {
     if (group.current) group.current.rotation.y += 0.002
   })
 
-  // Applicera färg
+  // Applicera färg och material
   model.scene.traverse((child: any) => {
     if (child.isMesh) {
       child.material.color = new THREE.Color(color)
-      child.material.roughness = 0.7
-      child.material.metalness = 0.1
+      child.material.roughness = 0.8
+      child.material.metalness = 0.05
     }
   })
 
   return (
-    <group ref={group} scale={2.5}>
+    <group ref={group} scale={2.2}>
       <primitive object={model.scene} />
 
-      {/* PNG-tryck (ligger som ett plan ovanpå bröstet) */}
-      <mesh position={[0, 0.35, 0.51]} rotation={[0, 0, 0]}>
+      {/* PNG-tryck ovanpå bröstet */}
+      <mesh position={[0, 0.42, 0.54]}>
         <planeGeometry args={[0.7, 0.4]} />
-        <meshBasicMaterial map={logoTexture} transparent opacity={1} />
+        <meshBasicMaterial
+          map={logoTexture}
+          transparent
+          opacity={1}
+          depthWrite={false}
+          depthTest={false}
+          side={THREE.FrontSide}
+        />
       </mesh>
     </group>
   )
 }
 
+
 export default function ShopPage() {
-  // Tre färger + deras respektive PNG-tryck
-  const variants = [
-    { color: '#1e3a8a', logo: 'KinW_v1.png' },
-    { color: '#b91c1c', logo: 'QE_v1.png' },
-    { color: '#f1f5f9', logo: 'ToC_v1.png' },
-  ]
+  // 🔵🔴⚪ Färgvarianter
+ const variants = [
+  { color: '#1e3a8a', logo: 'KinW_v1.png' }, // blå
+  { color: '#b91c1c', logo: 'QE_v1.png' },   // röd
+  { color: '#0a0a0a', logo: 'ToC_v1.png' },  // svart
+]
+
 
   const [index, setIndex] = useState(0)
   const prev = () => setIndex((i) => (i - 1 + variants.length) % variants.length)
@@ -101,20 +110,21 @@ export default function ShopPage() {
         </Canvas>
       </div>
 
-      {/* PILAR FÖR ATT BYTA VARIANT */}
+      {/* PILAR */}
       <div
         style={{
           position: 'absolute',
           bottom: '12%',
           display: 'flex',
           gap: '2rem',
-          fontSize: '2rem',
+          fontSize: '2.2rem',
           cursor: 'pointer',
           userSelect: 'none',
+          fontFamily: '"Space Grotesk", monospace',
         }}
       >
-        <span onClick={prev} style={{ opacity: 0.6 }}>⬅️</span>
-        <span onClick={next} style={{ opacity: 0.6 }}>➡️</span>
+        <span onClick={prev} style={{ opacity: 0.7 }}>{'<'}</span>
+        <span onClick={next} style={{ opacity: 0.7 }}>{'>'}</span>
       </div>
     </main>
   )
