@@ -1,11 +1,11 @@
 'use client'
 
-// @ts-expect-error - GLTFLoader types missing
+// @ts-expect-error - GLTFLoader has no TS types
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import NavBar from '../components/NavBar'
 
 // 👕 3D-tröjkomponent
@@ -14,22 +14,29 @@ function TShirt({ color, logo }: { color: string; logo: string }) {
   const logoTexture = useLoader(THREE.TextureLoader, `/textures/${logo}`)
   const group = useRef<THREE.Group>(null)
 
+  useEffect(() => {
+    if (!model?.scene) return
+    model.scene.traverse((child: any) => {
+      if (child.isMesh) {
+        // Tvinga fram synligt material oavsett GLB:s inbyggda shader
+        child.material = new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(color),
+          roughness: 0.55,
+          metalness: 0.05,
+          clearcoat: 0.3,
+          clearcoatRoughness: 0.4,
+          side: THREE.DoubleSide,
+        })
+        child.material.needsUpdate = true
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+  }, [model, color])
+
   // Långsam rotation
   useFrame(() => {
     if (group.current) group.current.rotation.y += 0.002
-  })
-
-  // Applicera färg & material
-  model.scene.traverse((child: any) => {
-    if (child.isMesh) {
-      child.material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(color),
-        roughness: 0.65,
-        metalness: 0.05,
-      })
-      child.castShadow = true
-      child.receiveShadow = true
-    }
   })
 
   return (
@@ -52,13 +59,12 @@ function TShirt({ color, logo }: { color: string; logo: string }) {
   )
 }
 
-// 🌌 Bakgrund + shop
+// 🌌 Shop-sida
 export default function ShopPage() {
-  // En färg + logga per variant
   const variants = [
     { color: '#1e3a8a', logo: 'KinW_v1.png' }, // blå
     { color: '#b91c1c', logo: 'QE_v1.png' },   // röd
-    { color: '#0a0a0a', logo: 'ToC_v1.png' },  // svart
+    { color: '#0f9d58', logo: 'ToC_v1.png' },  // grön
   ]
 
   const [index, setIndex] = useState(0)
@@ -98,18 +104,15 @@ export default function ShopPage() {
 
       <div style={{ width: 'min(85vw,580px)', height: '65vh' }}>
         <Canvas camera={{ position: [0, 0, 3.6], fov: 45 }}>
-          {/* Diskret gradientbakgrund */}
           <color attach="background" args={['#040411']} />
-          <spotLight position={[0, 3, 5]} intensity={1.2} color="#a0c8ff" />
-          <ambientLight intensity={1.1} />
-          <directionalLight position={[2, 4, 5]} intensity={1.4} />
-          <pointLight position={[-3, -2, -2]} intensity={0.6} />
 
-          {/* Aktuell tröjvariant */}
-          <TShirt
-            color={variants[index].color}
-            logo={variants[index].logo}
-          />
+          {/* Belysning fixad med rätt props */}
+          <hemisphereLight color="#ffffff" groundColor="#1a1a1a" intensity={0.8} />
+          <directionalLight position={[3, 4, 5]} intensity={2.2} color="#a0c8ff" />
+          <directionalLight position={[-3, 2, -2]} intensity={1.4} color="#ffffff" />
+          <pointLight position={[0, 3, 2]} intensity={1.2} color="#a0c8ff" />
+
+          <TShirt color={variants[index].color} logo={variants[index].logo} />
 
           <OrbitControls
             enableZoom={false}
