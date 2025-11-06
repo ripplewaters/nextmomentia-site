@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import NavBar from '../components/NavBar'
 
 export default function ShopPage() {
@@ -30,24 +30,36 @@ export default function ShopPage() {
       }}
     >
       {/* === VIDEO BACKGROUND === */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
+      <div
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
           zIndex: 0,
+          overflow: 'hidden',
         }}
       >
-        <source src="/videos/shop_bg2.mp4" type="video/mp4" />
-      </video>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        >
+          <source src="/videos/shop_bg2.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* === NAVIGATION === */}
       <NavBar />
@@ -65,6 +77,7 @@ export default function ShopPage() {
           WebkitTextFillColor: 'transparent',
           zIndex: 2,
           textAlign: 'center',
+          position: 'relative',
         }}
       >
         NextMomentia Shop
@@ -79,7 +92,7 @@ export default function ShopPage() {
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          zIndex: 2,
+          zIndex: 5,
         }}
       >
         <img
@@ -90,14 +103,14 @@ export default function ShopPage() {
             maxWidth: '400px',
             height: 'auto',
             objectFit: 'contain',
-            zIndex: 2,
+            position: 'relative',
+            zIndex: 5,
             filter: `
               drop-shadow(0 20px 45px rgba(0,0,0,0.8))
               drop-shadow(0 0 35px rgba(255,255,255,0.15))
               drop-shadow(0 0 80px rgba(173,216,255,0.1))
             `,
             animation: 'float 4s ease-in-out infinite',
-            transition: 'filter 0.4s ease-in-out',
           }}
         />
       </div>
@@ -109,13 +122,15 @@ export default function ShopPage() {
           background:
             'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))',
           backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: '12px',
           padding: '0.6rem 1.6rem',
           fontSize: 'clamp(1rem, 2vw, 1.2rem)',
           letterSpacing: '0.05em',
           color: '#a8d9ff',
-          zIndex: 3,
+          zIndex: 10,
+          position: 'relative',
           boxShadow:
             '0 0 20px rgba(168,217,255,0.1), inset 0 0 10px rgba(255,255,255,0.05)',
         }}
