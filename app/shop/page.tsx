@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
+// @ts-expect-error - GLTFLoader has no type declarations, safe to ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
