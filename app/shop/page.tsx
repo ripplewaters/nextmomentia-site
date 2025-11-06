@@ -4,8 +4,8 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef } from 'react'
+import NavBar from '../components/NavBar'
 
-// 👕 Enkel 3D-tröja byggd i kod (kropp + ärmar)
 function CodeTShirt({ color, textureFile, position }: { color: string; textureFile: string; position: [number, number, number] }) {
   const texture = useLoader(THREE.TextureLoader, `/textures/${textureFile}`)
   const group = useRef<THREE.Group>(null)
@@ -16,18 +16,10 @@ function CodeTShirt({ color, textureFile, position }: { color: string; textureFi
 
   return (
     <group ref={group} position={position} scale={[1.2, 1.2, 1.2]}>
-      {/* Kroppen */}
       <mesh>
         <cylinderGeometry args={[0.6, 0.8, 1.2, 32]} />
-        <meshStandardMaterial
-          color={color}
-          map={texture}
-          roughness={0.5}
-          metalness={0.1}
-        />
+        <meshStandardMaterial color={color} map={texture} roughness={0.5} metalness={0.1} />
       </mesh>
-
-      {/* Ärmar */}
       <mesh position={[0.8, 0.2, 0]}>
         <cylinderGeometry args={[0.25, 0.25, 0.8, 32]} />
         <meshStandardMaterial color={color} map={texture} />
@@ -36,8 +28,6 @@ function CodeTShirt({ color, textureFile, position }: { color: string; textureFi
         <cylinderGeometry args={[0.25, 0.25, 0.8, 32]} />
         <meshStandardMaterial color={color} map={texture} />
       </mesh>
-
-      {/* Halsring */}
       <mesh position={[0, 0.65, 0]}>
         <torusGeometry args={[0.25, 0.05, 16, 64]} />
         <meshStandardMaterial color={color} />
@@ -61,6 +51,8 @@ export default function ShopPage() {
         fontFamily: '"Space Grotesk", sans-serif',
       }}
     >
+      <NavBar />
+
       <h1
         style={{
           fontSize: '1.6rem',
@@ -80,10 +72,7 @@ export default function ShopPage() {
           <ambientLight intensity={0.6} />
           <directionalLight position={[3, 3, 3]} intensity={1.2} />
 
-          {/* 🔵 Blå tröja */}
           <CodeTShirt color="#1e40af" textureFile="KinW_v1.png" position={[-1.2, 0, 0]} />
-
-          {/* 🔴 Röd tröja */}
           <CodeTShirt color="#b91c1c" textureFile="QE_v1.png" position={[1.2, 0, 0]} />
 
           <OrbitControls enableZoom enablePan={false} />
