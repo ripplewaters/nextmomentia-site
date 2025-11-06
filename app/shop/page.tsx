@@ -29,7 +29,7 @@ export default function ShopPage() {
         justifyContent: 'center',
       }}
     >
-      {/* === VIDEO BACKGROUND === */}
+      {/* === FIXED VIDEO BACKGROUND === */}
       <div
         style={{
           position: 'fixed',
@@ -37,8 +37,11 @@ export default function ShopPage() {
           left: 0,
           width: '100%',
           height: '100%',
-          zIndex: 0,
           overflow: 'hidden',
+          zIndex: 0,
+          isolation: 'isolate',
+          mixBlendMode: 'normal',
+          willChange: 'transform',
         }}
       >
         <video
@@ -51,10 +54,11 @@ export default function ShopPage() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            WebkitTransform: 'translateZ(0)',
-            transform: 'translateZ(0)',
             zIndex: 0,
+            transform: 'translateZ(0)',
+            WebkitTransform: 'translateZ(0)',
             pointerEvents: 'none',
+            opacity: 0.95,
           }}
         >
           <source src="/videos/shop_bg2.mp4" type="video/mp4" />
@@ -75,7 +79,7 @@ export default function ShopPage() {
           background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          zIndex: 2,
+          zIndex: 3,
           textAlign: 'center',
           position: 'relative',
         }}
@@ -129,7 +133,7 @@ export default function ShopPage() {
           fontSize: 'clamp(1rem, 2vw, 1.2rem)',
           letterSpacing: '0.05em',
           color: '#a8d9ff',
-          zIndex: 10,
+          zIndex: 6,
           position: 'relative',
           boxShadow:
             '0 0 20px rgba(168,217,255,0.1), inset 0 0 10px rgba(255,255,255,0.05)',
@@ -138,7 +142,6 @@ export default function ShopPage() {
         $29 USD
       </div>
 
-      {/* FLOAT ANIMATION */}
       <style jsx global>{`
         @keyframes float {
           0% {
