@@ -6,6 +6,8 @@ import { useRef } from 'react'
 import { TextureLoader } from 'three'
 import { OrbitControls } from '@react-three/drei'
 import { Space_Grotesk } from 'next/font/google'
+import Link from 'next/link'
+
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -202,7 +204,7 @@ export default function Home() {
           position: 'absolute',
           bottom: '8%',
           opacity: 0.9,
-          letterSpacing: '-0.5px',
+          letterSpacing: '0.5px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -235,7 +237,7 @@ export default function Home() {
               'linear-gradient(135deg, rgba(130,200,255,0.25) 0%, rgba(255,255,255,0.75) 100%)',
             color: '#051035',
             fontWeight: 600,
-            letterSpacing: '0.08em',
+            letterSpacing: '0.3em',
             textDecoration: 'none',
             boxShadow: '0 12px 40px rgba(140,210,255,0.35)',
             backdropFilter: 'blur(6px)',
