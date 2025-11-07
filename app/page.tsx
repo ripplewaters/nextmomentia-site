@@ -12,13 +12,16 @@ function RealisticEarth() {
   const cloudRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
 
-  const [day, night, bump, spec, clouds] = useLoader(TextureLoader, [
-    '/textures/earth_daymap.jpg',
-    '/textures/earth_nightmap.jpg',
-    '/textures/earthbump1k.jpg',
-    '/textures/earthspec1k.jpg',
-    '/textures/earth_clouds.jpg',
-  ])
+const [day, night, bump, spec, clouds] = useLoader(TextureLoader, [
+  '/textures/earth_daymap.jpg',   // dagtextur
+  '/textures/earth_nightmap.jpg', // nattkarta
+  '/textures/earthbump1k.jpg',    // bump
+  '/textures/earthspec1k.jpg',    // reflektion
+  '/textures/earth_clouds.jpg',   // moln
+])
+
+
+
 
   useFrame(({ clock, scene }) => {
     const t = clock.getElapsedTime() * 0.1
@@ -127,22 +130,11 @@ export default function Home() {
           height: '100%',
           objectFit: 'cover',
           zIndex: 0,
-          filter: 'brightness(0.7) contrast(1.25) saturate(1.1)',
+          filter: 'brightness(1) contrast(1.25) saturate(1)',
         }}
       >
-        <source src="/videos/shop_bg5.mp4" type="video/mp4" />
+        <source src="/videos/shop_bg7.mp4" type="video/mp4" />
       </video>
-
-      {/* === DARK OVERLAY === */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background:
-            'radial-gradient(circle at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.9) 100%)',
-          zIndex: 1,
-        }}
-      />
 
       {/* === NAVBAR === */}
       <div
@@ -160,7 +152,7 @@ export default function Home() {
         <NavBar />
       </div>
 
-      {/* === EARTH + HALO GLOW === */}
+      {/* === EARTH + MINI GLOBE INTRO === */}
       <div
         style={{
           position: 'absolute',
@@ -178,27 +170,32 @@ export default function Home() {
           justifyContent: 'center',
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            width: '180%',
-            height: '180%',
-            borderRadius: '50%',
-            background:
-              'radial-gradient(circle, rgba(255,200,150,0.18) 0%, rgba(130,200,255,0.25) 30%, rgba(0,0,0,0) 75%)',
-            filter: 'blur(100px)',
-            opacity: 0.9,
-            zIndex: 1,
-            animation: 'glowpulse 6s ease-in-out infinite',
-          }}
-        />
+        {/* === GLOW BACKDROP === */}
+<div
+  style={{
+    position: 'absolute',
+    width: '180%',
+    height: '180%',
+    borderRadius: '50%',
+    background:
+      'radial-gradient(circle, rgba(255,200,150,0.18) 0%, rgba(130,200,255,0.25) 30%, rgba(0,0,0,0) 75%)',
+    filter: 'blur(100px)',
+    opacity: 0.9,
+    zIndex: 1,
+    animation: 'glowpulse 6s ease-in-out infinite',
+  }}
+/>
+
+{/* === LARGE EARTH === */}
+
+        {/* === LARGE EARTH === */}
 
         <Canvas
           camera={{ position: [0, 0, 6], fov: 45 }}
           style={{
             borderRadius: '50%',
             background: 'transparent',
-            zIndex: 2,
+            zIndex: 3,
           }}
         >
           <ambientLight intensity={0.3} />
@@ -218,7 +215,7 @@ export default function Home() {
         </Canvas>
       </div>
 
-      {/* === BOTTOM SECTION === */}
+      {/* === BOTTOM CTA === */}
       <section
         style={{
           position: 'absolute',
@@ -292,6 +289,25 @@ export default function Home() {
           100% {
             opacity: 0.75;
             transform: scale(1);
+          }
+        }
+
+        @keyframes fadeMini {
+          0% {
+            opacity: 0;
+            transform: scale(0.6);
+          }
+          20% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          70% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          100% {
+            opacity: 0;
+            transform: scale(2.4);
           }
         }
 

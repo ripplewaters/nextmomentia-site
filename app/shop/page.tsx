@@ -57,7 +57,7 @@ export default function ShopPage() {
             pointerEvents: 'none',
           }}
         >
-          <source src="/videos/shop_bg2.mp4" type="video/mp4" />
+          <source src="/videos/shop_bg7.mp4" type="video/mp4" />
         </video>
       ) : (
         <img
