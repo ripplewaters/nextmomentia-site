@@ -11,92 +11,107 @@ function RealisticEarth() {
   const earthRef = useRef<THREE.Mesh>(null)
   const cloudRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
+  const sunLight = useRef<THREE.DirectionalLight>(null)
 
-const [day, night, bump, spec, clouds] = useLoader(TextureLoader, [
-  '/textures/earth_daymap.jpg',   // dagtextur
-  '/textures/earth_nightmap.jpg', // nattkarta
-  '/textures/earthbump1k.jpg',    // bump
-  '/textures/earthspec1k.jpg',    // reflektion
-  '/textures/earth_clouds.jpg',   // moln
-])
+  const [day, night, bump, spec, clouds] = useLoader(TextureLoader, [
+    '/textures/earth_daymap.jpg',
+    '/textures/earth_nightmap.jpg',
+    '/textures/earthbump1k.jpg',
+    '/textures/earthspec1k.jpg',
+    '/textures/earth_clouds.jpg',
+  ])
 
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime() * 0.15
 
-
-
-  useFrame(({ clock, scene }) => {
-    const t = clock.getElapsedTime() * 0.1
-    const light = scene.getObjectByName('sunLight') as THREE.DirectionalLight
-    if (light) light.position.set(Math.sin(t) * 10, 2, Math.cos(t) * 10)
+    // Roterande sol-ljus
+    if (sunLight.current)
+      sunLight.current.position.set(Math.sin(t) * 10, 2, Math.cos(t) * 10)
 
     if (earthRef.current) earthRef.current.rotation.y += 0.0008
     if (cloudRef.current) cloudRef.current.rotation.y += 0.001
     if (glowRef.current) glowRef.current.rotation.y += 0.0008
 
-    if (earthRef.current?.material) {
-      const mat = earthRef.current.material as THREE.MeshPhongMaterial
-      mat.emissiveIntensity = 1.4 + Math.sin(clock.getElapsedTime() * 0.6) * 0.2
+    // Lätt puls i glöd
+    if (earthRef.current?.material instanceof THREE.MeshPhongMaterial) {
+      earthRef.current.material.emissiveIntensity =
+        1.2 + Math.sin(clock.elapsedTime * 0.6) * 0.1
     }
   })
 
   return (
     <>
+      {/* Jord */}
       <mesh ref={earthRef} scale={2.5}>
         <sphereGeometry args={[1, 128, 128]} />
         <meshPhongMaterial
           map={day}
           bumpMap={bump}
-          bumpScale={0.05}
+          bumpScale={0.04}
           specularMap={spec}
           specular={new THREE.Color('#3366ff')}
           shininess={20}
           emissiveMap={night}
           emissive={new THREE.Color('#ffd580')}
-          emissiveIntensity={1.5}
+          emissiveIntensity={1.3}
         />
       </mesh>
 
+      {/* Glöd */}
       <mesh ref={glowRef} scale={2.52}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
           map={night}
           transparent
-          opacity={0.35}
+          opacity={0.3}
           color={'#ffcc88'}
           blending={THREE.AdditiveBlending}
           side={THREE.FrontSide}
         />
       </mesh>
 
+      {/* Moln */}
       <mesh ref={cloudRef} scale={2.54}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshPhongMaterial
           map={clouds}
           transparent
-          opacity={0.4}
+          opacity={0.35}
           depthWrite={false}
         />
       </mesh>
 
+      {/* Svagt ljusblå atmosfär */}
       <mesh scale={2.56}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
           color="#3fa9f5"
           transparent
-          opacity={0.12}
+          opacity={0.1}
           side={THREE.BackSide}
         />
       </mesh>
+
+      {/* Ljus */}
+      <ambientLight intensity={0.3} />
+      <directionalLight
+        ref={sunLight}
+        color={0xffffff}
+        intensity={2.1}
+        position={[5, 0, 5]}
+      />
     </>
   )
 }
 
 export default function Home() {
+  // Fixar autoplay på video även i Safari/iOS
   useEffect(() => {
     const video = document.querySelector('video')
     if (video) {
-      video.play().catch(() => {
-        setTimeout(() => video.play().catch(() => {}), 500)
-      })
+      const playVideo = () =>
+        video.play().catch(() => setTimeout(playVideo, 300))
+      playVideo()
     }
   }, [])
 
@@ -115,7 +130,7 @@ export default function Home() {
         position: 'relative',
       }}
     >
-      {/* === VIDEO BACKGROUND === */}
+      {/* --- VIDEO BACKGROUND --- */}
       <video
         autoPlay
         loop
@@ -130,13 +145,13 @@ export default function Home() {
           height: '100%',
           objectFit: 'cover',
           zIndex: 0,
-          filter: 'brightness(1) contrast(1.25) saturate(1)',
+          filter: 'brightness(1.1) contrast(1.2) saturate(1.1)',
         }}
       >
         <source src="/videos/shop_bg7.mp4" type="video/mp4" />
       </video>
 
-      {/* === NAVBAR === */}
+      {/* --- NAVBAR --- */}
       <div
         style={{
           position: 'absolute',
@@ -144,15 +159,15 @@ export default function Home() {
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 10,
+          width: '100%',
           display: 'flex',
           justifyContent: 'center',
-          width: '100%',
         }}
       >
         <NavBar />
       </div>
 
-      {/* === EARTH + MINI GLOBE INTRO === */}
+      {/* --- EARTH SECTION --- */}
       <div
         style={{
           position: 'absolute',
@@ -162,34 +177,29 @@ export default function Home() {
           width: 'min(75vw, 520px)',
           aspectRatio: '1 / 1',
           overflow: 'visible',
-          maxWidth: '520px',
-          minWidth: '260px',
           zIndex: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* === GLOW BACKDROP === */}
-<div
-  style={{
-    position: 'absolute',
-    width: '180%',
-    height: '180%',
-    borderRadius: '50%',
-    background:
-      'radial-gradient(circle, rgba(255,200,150,0.18) 0%, rgba(130,200,255,0.25) 30%, rgba(0,0,0,0) 75%)',
-    filter: 'blur(100px)',
-    opacity: 0.9,
-    zIndex: 1,
-    animation: 'glowpulse 6s ease-in-out infinite',
-  }}
-/>
+        {/* --- GLOW BACKDROP --- */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '180%',
+            height: '180%',
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle, rgba(255,200,150,0.18) 0%, rgba(130,200,255,0.25) 30%, rgba(0,0,0,0) 75%)',
+            filter: 'blur(100px)',
+            opacity: 0.9,
+            zIndex: 1,
+            animation: 'glowpulse 6s ease-in-out infinite',
+          }}
+        />
 
-{/* === LARGE EARTH === */}
-
-        {/* === LARGE EARTH === */}
-
+        {/* --- GLOBE CANVAS --- */}
         <Canvas
           camera={{ position: [0, 0, 6], fov: 45 }}
           style={{
@@ -198,13 +208,6 @@ export default function Home() {
             zIndex: 3,
           }}
         >
-          <ambientLight intensity={0.3} />
-          <directionalLight
-            name="sunLight"
-            color={0xffffff}
-            intensity={2.2}
-            position={[5, 0, 5]}
-          />
           <RealisticEarth />
           <OrbitControls
             enableZoom={false}
@@ -215,7 +218,7 @@ export default function Home() {
         </Canvas>
       </div>
 
-      {/* === BOTTOM CTA === */}
+      {/* --- CTA --- */}
       <section
         style={{
           position: 'absolute',
@@ -275,7 +278,6 @@ export default function Home() {
         </a>
       </section>
 
-      {/* === GLOBAL STYLES === */}
       <style jsx global>{`
         @keyframes glowpulse {
           0% {
@@ -291,26 +293,6 @@ export default function Home() {
             transform: scale(1);
           }
         }
-
-        @keyframes fadeMini {
-          0% {
-            opacity: 0;
-            transform: scale(0.6);
-          }
-          20% {
-            opacity: 1;
-            transform: scale(1.05);
-          }
-          70% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          100% {
-            opacity: 0;
-            transform: scale(2.4);
-          }
-        }
-
         nav a {
           font-weight: 700 !important;
           letter-spacing: 0.08em;

@@ -60,18 +60,23 @@ export default function NavBar() {
           textTransform: 'uppercase',
         }}
       >
-        <Link href="/#videos" style={navLinkStyle}>
+        <a
+          href="https://www.youtube.com/@NextMomentia"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={navLinkStyle}
+        >
           Videos
-        </Link>
+        </a>
         <Link href="/shop" style={navLinkStyle}>
           Shop
         </Link>
-        <Link href="/#about" style={navLinkStyle}>
+        <Link href="/about" style={navLinkStyle}>
           About
         </Link>
       </nav>
 
-      {/* === MOBILE BURGER BUTTON === */}
+      {/* === MOBILE BURGER === */}
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -107,13 +112,19 @@ export default function NavBar() {
             boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
           }}
         >
-          <Link href="/#videos" style={mobileLinkStyle} onClick={() => setOpen(false)}>
+          <a
+            href="https://www.youtube.com/@NextMomentia"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={mobileLinkStyle}
+            onClick={() => setOpen(false)}
+          >
             Videos
-          </Link>
+          </a>
           <Link href="/shop" style={mobileLinkStyle} onClick={() => setOpen(false)}>
             Shop
           </Link>
-          <Link href="/#about" style={mobileLinkStyle} onClick={() => setOpen(false)}>
+          <Link href="/about" style={mobileLinkStyle} onClick={() => setOpen(false)}>
             About
           </Link>
         </div>
@@ -127,7 +138,6 @@ export default function NavBar() {
           letter-spacing: 0.08em !important;
         }
 
-        /* RESPONSIVE RULES */
         @media (max-width: 640px) {
           .desktop-nav {
             display: none !important;

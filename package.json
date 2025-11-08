@@ -22,7 +22,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/estree": "^1.0.8",
+    "@types/geojson": "^7946.0.16",
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^20.19.24",
+    "@types/offscreencanvas": "^2019.7.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
