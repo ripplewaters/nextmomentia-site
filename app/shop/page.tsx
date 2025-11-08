@@ -7,13 +7,19 @@ export default function ShopPage() {
   const [isIOS, setIsIOS] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
+  // --- Detect iOS or Safari ---
   useEffect(() => {
     if (typeof navigator !== 'undefined') {
       const ua = navigator.userAgent.toLowerCase()
-      if (/iphone|ipad|ipod/.test(ua)) setIsIOS(true)
+      const iOS =
+        /iphone|ipad|ipod/.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+      const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      if (iOS || safari) setIsIOS(true)
     }
   }, [])
 
+  // --- Auto play video on desktop ---
   useEffect(() => {
     const video = document.querySelector('video')
     if (video && !isIOS) {
@@ -23,11 +29,12 @@ export default function ShopPage() {
     }
   }, [isIOS])
 
+  // --- Handle Form Submit ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
     const data = new FormData(form)
-    await fetch('https://formspree.io/f/mvgoqwzj', {
+    await fetch('https://formspree.io/f/mgvrwkbo', {
       method: 'POST',
       body: data,
       headers: { Accept: 'application/json' },
@@ -41,8 +48,8 @@ export default function ShopPage() {
       style={{
         width: '100vw',
         height: '100vh',
-        backgroundColor: 'black',
-        color: 'white',
+        backgroundColor: '#000',
+        color: '#fff',
         fontFamily: '"Space Grotesk", sans-serif',
         position: 'relative',
         overflow: 'hidden',
@@ -50,6 +57,7 @@ export default function ShopPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        animation: 'fadeIn 1.2s ease-in-out',
       }}
     >
       {/* === BACKGROUND === */}
@@ -68,37 +76,36 @@ export default function ShopPage() {
             height: '100%',
             objectFit: 'cover',
             zIndex: 0,
-            pointerEvents: 'none',
           }}
         >
           <source src="/videos/shop_bg7.mp4" type="video/mp4" />
         </video>
       ) : (
         <img
-          src="/mockups/shirt_blue.png"
-          alt="Background"
+          src="/mockups/shop_bg_fallback.jpg"
+          alt="Shop background"
           style={{
-            position: 'fixed',
+            position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            opacity: 0.25,
             zIndex: 0,
-            pointerEvents: 'none',
-            opacity: 0.15,
           }}
         />
       )}
 
+      {/* === NAVBAR === */}
       <NavBar />
 
-      {/* === LOGO (EYE) === */}
+      {/* === LOGO === */}
       <img
         src="/icon.png"
         alt="NextMomentia Eye Logo"
         style={{
-          width: '90px',
+          width: '75px',
           height: 'auto',
           marginTop: '5rem',
           animation: 'pulseGlow 3.5s ease-in-out infinite',
@@ -106,26 +113,25 @@ export default function ShopPage() {
         }}
       />
 
-      {/* === FROSTED TITLE BOX === */}
+      {/* === TITLE === */}
       <div
         style={{
           marginTop: '1rem',
-          padding: '0.8rem 2.2rem',
+          padding: '0.6rem 1.6rem',
           borderRadius: '16px',
           background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.15)',
+          backdropFilter: !isIOS ? 'blur(10px)' : 'none',
+          WebkitBackdropFilter: !isIOS ? 'blur(10px)' : 'none',
           boxShadow:
             '0 0 25px rgba(168,217,255,0.25), inset 0 0 10px rgba(255,255,255,0.05)',
           zIndex: 3,
           textAlign: 'center',
-          position: 'relative',
         }}
       >
         <h1
           style={{
-            fontSize: 'clamp(1.4rem, 2vw + 0.6rem, 2rem)',
+            fontSize: 'clamp(1.2rem, 2vw + 0.6rem, 1.8rem)',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
             background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
@@ -142,11 +148,13 @@ export default function ShopPage() {
       {/* === SHIRT === */}
       <div
         style={{
-          width: 'min(90vw, 500px)',
+          width: 'min(70vw, 320px)',
+          height: 'auto',
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: '1.6rem',
           zIndex: 5,
-          marginTop: '2rem',
         }}
       >
         <img
@@ -154,14 +162,14 @@ export default function ShopPage() {
           alt="Question Everything Shirt"
           style={{
             width: '100%',
-            maxWidth: '400px',
+            height: 'auto',
             objectFit: 'contain',
             filter: `
-              drop-shadow(0 20px 45px rgba(0,0,0,0.8))
-              drop-shadow(0 0 35px rgba(255,255,255,0.15))
-              drop-shadow(0 0 80px rgba(173,216,255,0.1))
+              drop-shadow(0 10px 25px rgba(0,0,0,0.8))
+              drop-shadow(0 0 25px rgba(255,255,255,0.1))
+              drop-shadow(0 0 55px rgba(173,216,255,0.1))
             `,
-            animation: 'float 4s ease-in-out infinite',
+            animation: 'float 5s ease-in-out infinite',
           }}
         />
       </div>
@@ -169,19 +177,20 @@ export default function ShopPage() {
       {/* === COMING SOON + SIGNUP === */}
       <div
         style={{
-          marginTop: '1.8rem',
+          marginTop: '1.3rem',
           textAlign: 'center',
           zIndex: 6,
+          paddingBottom: '2.5rem',
         }}
       >
         <h2
           style={{
-            fontSize: '1.4rem',
+            fontSize: '1.1rem',
             color: '#a8d9ff',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             marginBottom: '1rem',
-            textShadow: '0 0 20px rgba(168,217,255,0.4)',
+            textShadow: '0 0 15px rgba(168,217,255,0.3)',
           }}
         >
           Coming Soon
@@ -194,7 +203,7 @@ export default function ShopPage() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.8rem',
+              gap: '0.6rem',
             }}
           >
             <input
@@ -203,56 +212,37 @@ export default function ShopPage() {
               placeholder="Enter your email for early access"
               required
               style={{
-                padding: '0.7rem 1.2rem',
-                borderRadius: '10px',
-                border: '1px solid rgba(255,255,255,0.15)',
+                padding: '0.55rem 1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.2)',
                 background: 'rgba(10,15,30,0.6)',
                 color: '#fff',
-                width: '260px',
+                width: '220px',
                 textAlign: 'center',
-                fontSize: '0.95rem',
-                boxShadow: '0 0 20px rgba(168,217,255,0.15)',
-                transition: 'all 0.3s ease',
-                outline: 'none',
+                fontSize: '0.9rem',
               }}
-              onFocus={(e) =>
-                (e.currentTarget.style.boxShadow =
-                  '0 0 35px rgba(168,217,255,0.35)')
-              }
-              onBlur={(e) =>
-                (e.currentTarget.style.boxShadow =
-                  '0 0 20px rgba(168,217,255,0.15)')
-              }
             />
             <button
               type="submit"
               className="glow-button"
               style={{
-                padding: '0.6rem 1.4rem',
-                borderRadius: '10px',
+                padding: '0.5rem 1.1rem',
+                borderRadius: '8px',
                 background:
                   'linear-gradient(135deg, rgba(0,180,255,0.4), rgba(255,255,255,0.15))',
                 border: '1px solid rgba(255,255,255,0.25)',
                 color: '#a8d9ff',
-                fontWeight: 600,
                 cursor: 'pointer',
-                letterSpacing: '0.05em',
                 transition: '0.3s ease',
-                boxShadow:
-                  '0 0 15px rgba(168,217,255,0.3), inset 0 0 10px rgba(255,255,255,0.1)',
+                fontWeight: 600,
+                fontSize: '0.85rem',
               }}
             >
               Notify Me
             </button>
           </form>
         ) : (
-          <p
-            style={{
-              color: '#9fffa8',
-              fontSize: '1rem',
-              textShadow: '0 0 15px rgba(159,255,168,0.4)',
-            }}
-          >
+          <p style={{ color: '#9fffa8', fontSize: '0.9rem' }}>
             Thanks! You'll be first to know.
           </p>
         )}
@@ -264,7 +254,7 @@ export default function ShopPage() {
             transform: translateY(0);
           }
           50% {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
           }
           100% {
             transform: translateY(0);
@@ -273,28 +263,56 @@ export default function ShopPage() {
 
         @keyframes pulseGlow {
           0% {
-            filter: drop-shadow(0 0 12px rgba(173,216,255,0.2));
-            transform: scale(1);
+            filter: drop-shadow(0 0 10px rgba(173,216,255,0.2));
           }
           50% {
-            filter: drop-shadow(0 0 35px rgba(173,216,255,0.45));
-            transform: scale(1.03);
+            filter: drop-shadow(0 0 30px rgba(173,216,255,0.45));
           }
           100% {
-            filter: drop-shadow(0 0 12px rgba(173,216,255,0.2));
-            transform: scale(1);
+            filter: drop-shadow(0 0 10px rgba(173,216,255,0.2));
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
 
         .glow-button:hover {
-          background: linear-gradient(135deg, rgba(50,200,255,0.7), rgba(255,255,255,0.2));
-          box-shadow: 0 0 35px rgba(168,217,255,0.5), inset 0 0 15px rgba(255,255,255,0.2);
+          background: linear-gradient(
+            135deg,
+            rgba(50,200,255,0.7),
+            rgba(255,255,255,0.2)
+          );
+          box-shadow: 0 0 25px rgba(168,217,255,0.4);
           transform: scale(1.05);
         }
 
         .glow-button:active {
           transform: scale(0.97);
           box-shadow: 0 0 15px rgba(168,217,255,0.3);
+        }
+
+        /* ✅ RESPONSIVE FIXES */
+        @media (max-width: 600px) {
+          img[alt='Question Everything Shirt'] {
+            width: 60vw !important;
+            max-width: 240px !important;
+          }
+
+          h1 {
+            font-size: 1.2rem !important;
+          }
+
+          h2 {
+            font-size: 1rem !important;
+          }
         }
       `}</style>
     </main>
