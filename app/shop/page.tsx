@@ -7,7 +7,7 @@ export default function ShopPage() {
   const [isIOS, setIsIOS] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
-  // --- Detect iOS or Safari ---
+  // Detect iOS or Safari
   useEffect(() => {
     if (typeof navigator !== 'undefined') {
       const ua = navigator.userAgent.toLowerCase()
@@ -19,7 +19,7 @@ export default function ShopPage() {
     }
   }, [])
 
-  // --- Auto play video on desktop ---
+  // Video autoplay (non-iOS)
   useEffect(() => {
     const video = document.querySelector('video')
     if (video && !isIOS) {
@@ -29,7 +29,6 @@ export default function ShopPage() {
     }
   }, [isIOS])
 
-  // --- Handle Form Submit ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
@@ -45,6 +44,7 @@ export default function ShopPage() {
 
   return (
     <main
+      id="shop-page"
       style={{
         width: '100vw',
         height: '100vh',
@@ -69,7 +69,7 @@ export default function ShopPage() {
           playsInline
           preload="auto"
           style={{
-            position: 'fixed',
+            position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
@@ -97,7 +97,6 @@ export default function ShopPage() {
         />
       )}
 
-      {/* === NAVBAR === */}
       <NavBar />
 
       {/* === LOGO === */}
@@ -105,7 +104,7 @@ export default function ShopPage() {
         src="/icon.png"
         alt="NextMomentia Eye Logo"
         style={{
-          width: '75px',
+          width: '80px',
           height: 'auto',
           marginTop: '5rem',
           animation: 'pulseGlow 3.5s ease-in-out infinite',
@@ -121,8 +120,8 @@ export default function ShopPage() {
           borderRadius: '16px',
           background: 'rgba(255, 255, 255, 0.08)',
           border: '1px solid rgba(255,255,255,0.15)',
-          backdropFilter: !isIOS ? 'blur(10px)' : 'none',
-          WebkitBackdropFilter: !isIOS ? 'blur(10px)' : 'none',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           boxShadow:
             '0 0 25px rgba(168,217,255,0.25), inset 0 0 10px rgba(255,255,255,0.05)',
           zIndex: 3,
@@ -149,7 +148,6 @@ export default function ShopPage() {
       <div
         style={{
           width: 'min(70vw, 320px)',
-          height: 'auto',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -157,21 +155,24 @@ export default function ShopPage() {
           zIndex: 5,
         }}
       >
-        <img
-          src="/mockups/shirt_blue.webp"
-          alt="Question Everything Shirt"
-          style={{
-            width: '100%',
-            height: 'auto',
-            objectFit: 'contain',
-            filter: `
-              drop-shadow(0 10px 25px rgba(0,0,0,0.8))
-              drop-shadow(0 0 25px rgba(255,255,255,0.1))
-              drop-shadow(0 0 55px rgba(173,216,255,0.1))
-            `,
-            animation: 'float 5s ease-in-out infinite',
-          }}
-        />
+        <picture>
+          <source srcSet="/mockups/shirt_blue.webp" type="image/webp" />
+          <img
+            src="/mockups/shirt_blue.png"
+            alt="Question Everything Shirt"
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+              filter: `
+                drop-shadow(0 10px 25px rgba(0,0,0,0.8))
+                drop-shadow(0 0 25px rgba(255,255,255,0.1))
+                drop-shadow(0 0 55px rgba(173,216,255,0.1))
+              `,
+              animation: 'float 5s ease-in-out infinite',
+            }}
+          />
+        </picture>
       </div>
 
       {/* === COMING SOON + SIGNUP === */}
@@ -250,69 +251,18 @@ export default function ShopPage() {
 
       <style jsx global>{`
         @keyframes float {
-          0% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-5px);
-          }
-          100% {
-            transform: translateY(0);
-          }
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+          100% { transform: translateY(0); }
         }
-
         @keyframes pulseGlow {
-          0% {
-            filter: drop-shadow(0 0 10px rgba(173,216,255,0.2));
-          }
-          50% {
-            filter: drop-shadow(0 0 30px rgba(173,216,255,0.45));
-          }
-          100% {
-            filter: drop-shadow(0 0 10px rgba(173,216,255,0.2));
-          }
+          0% { filter: drop-shadow(0 0 10px rgba(173,216,255,0.2)); }
+          50% { filter: drop-shadow(0 0 30px rgba(173,216,255,0.45)); }
+          100% { filter: drop-shadow(0 0 10px rgba(173,216,255,0.2)); }
         }
-
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .glow-button:hover {
-          background: linear-gradient(
-            135deg,
-            rgba(50,200,255,0.7),
-            rgba(255,255,255,0.2)
-          );
-          box-shadow: 0 0 25px rgba(168,217,255,0.4);
-          transform: scale(1.05);
-        }
-
-        .glow-button:active {
-          transform: scale(0.97);
-          box-shadow: 0 0 15px rgba(168,217,255,0.3);
-        }
-
-        /* ✅ RESPONSIVE FIXES */
-        @media (max-width: 600px) {
-          img[alt='Question Everything Shirt'] {
-            width: 60vw !important;
-            max-width: 240px !important;
-          }
-
-          h1 {
-            font-size: 1.2rem !important;
-          }
-
-          h2 {
-            font-size: 1rem !important;
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </main>
