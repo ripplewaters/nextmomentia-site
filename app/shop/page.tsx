@@ -158,7 +158,7 @@ export default function ShopPage() {
         }}
       >
         <img
-          src="/mockups/shirt_blue.png"
+          src="/mockups/shirt_blue.webp"
           alt="Question Everything Shirt"
           style={{
             width: '100%',
