@@ -144,7 +144,7 @@ export default function Home() {
           filter: 'brightness(1.1) contrast(1.2) saturate(1.1)',
         }}
       >
-        <source src="/videos/shop_bg7.mp4" type="video/mp4" />
+        <source src="/videos/shop_bg_earth.mp4" type="video/mp4" />
       </video>
 
       {/* --- NAVBAR --- */}

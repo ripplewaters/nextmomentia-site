@@ -101,7 +101,7 @@ export default function ShopPage() {
             zIndex: 0,
           }}
         >
-          <source src="/videos/shop_bg7.mp4" type="video/mp4" />
+          <source src="/videos/shop_bg_earth.mp4" type="video/mp4" />
         </video>
       ) : (
         <img
