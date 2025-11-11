@@ -23,8 +23,6 @@ function RealisticEarth() {
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime() * 0.15
-
-    // Roterande sol-ljus
     if (sunLight.current)
       sunLight.current.position.set(Math.sin(t) * 10, 2, Math.cos(t) * 10)
 
@@ -32,7 +30,6 @@ function RealisticEarth() {
     if (cloudRef.current) cloudRef.current.rotation.y += 0.001
     if (glowRef.current) glowRef.current.rotation.y += 0.0008
 
-    // Lätt puls i glöd
     if (earthRef.current?.material instanceof THREE.MeshPhongMaterial) {
       earthRef.current.material.emissiveIntensity =
         1.2 + Math.sin(clock.elapsedTime * 0.6) * 0.1
@@ -81,7 +78,7 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* Svagt ljusblå atmosfär */}
+      {/* Atmosfär */}
       <mesh scale={2.56}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
@@ -105,7 +102,6 @@ function RealisticEarth() {
 }
 
 export default function Home() {
-  // Fixar autoplay på video även i Safari/iOS
   useEffect(() => {
     const video = document.querySelector('video')
     if (video) {
@@ -167,6 +163,26 @@ export default function Home() {
         <NavBar />
       </div>
 
+      {/* --- EYE LOGO --- */}
+      {/* --- EYE LOGO (över globen, inte på den) --- */}
+<img
+  src="/icon.png"
+  alt="NextMomentia Eye Logo"
+  style={{
+    position: 'absolute',
+    top: 'calc(50% - 380px)', // flyttar upp loggan över globen
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '85px',
+    height: 'auto',
+    zIndex: 4,
+    opacity: 0.9,
+    filter: 'drop-shadow(0 0 25px rgba(168,217,255,0.6))',
+    animation: 'pulseGlow 4s ease-in-out infinite',
+  }}
+/>
+
+
       {/* --- EARTH SECTION --- */}
       <div
         style={{
@@ -183,7 +199,6 @@ export default function Home() {
           justifyContent: 'center',
         }}
       >
-        {/* --- GLOW BACKDROP --- */}
         <div
           style={{
             position: 'absolute',
@@ -198,8 +213,6 @@ export default function Home() {
             animation: 'glowpulse 6s ease-in-out infinite',
           }}
         />
-
-        {/* --- GLOBE CANVAS --- */}
         <Canvas
           camera={{ position: [0, 0, 6], fov: 45 }}
           style={{
@@ -293,9 +306,17 @@ export default function Home() {
             transform: scale(1);
           }
         }
-        nav a {
-          font-weight: 700 !important;
-          letter-spacing: 0.08em;
+
+        @keyframes pulseGlow {
+          0% {
+            filter: drop-shadow(0 0 10px rgba(168,217,255,0.3));
+          }
+          50% {
+            filter: drop-shadow(0 0 30px rgba(168,217,255,0.65));
+          }
+          100% {
+            filter: drop-shadow(0 0 10px rgba(168,217,255,0.3));
+          }
         }
       `}</style>
     </main>
