@@ -163,26 +163,6 @@ export default function Home() {
         <NavBar />
       </div>
 
-      {/* --- EYE LOGO --- */}
-      {/* --- EYE LOGO (över globen, inte på den) --- */}
-<img
-  src="/icon.png"
-  alt="NextMomentia Eye Logo"
-  style={{
-    position: 'absolute',
-    top: 'calc(50% - 380px)', // flyttar upp loggan över globen
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '85px',
-    height: 'auto',
-    zIndex: 4,
-    opacity: 0.9,
-    filter: 'drop-shadow(0 0 25px rgba(168,217,255,0.6))',
-    animation: 'pulseGlow 4s ease-in-out infinite',
-  }}
-/>
-
-
       {/* --- EARTH SECTION --- */}
       <div
         style={{

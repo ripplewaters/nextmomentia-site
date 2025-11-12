@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import Image from 'next/image'
 import { Space_Grotesk } from 'next/font/google'
 
 const spaceGrotesk = Space_Grotesk({
@@ -32,21 +33,39 @@ export default function NavBar() {
       }}
       className={spaceGrotesk.className}
     >
-      {/* === LOGO === */}
+      {/* === LOGO + TEXT === */}
       <Link
         href="/"
         style={{
-          fontSize: '1.1rem',
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          background: 'linear-gradient(90deg, #ffffff 0%, #b9e2ff 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.45rem',
           textDecoration: 'none',
         }}
       >
-        NextMomentia
+        <Image
+          src="/icon.png"
+          alt="NextMomentia Eye Logo"
+          width={26}
+          height={26}
+          style={{
+            filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.65))',
+            transform: 'translateY(1px)',
+          }}
+        />
+        <span
+          style={{
+            fontSize: '1.1rem',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            background: 'linear-gradient(90deg, #ffffff 0%, #b9e2ff 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 700,
+          }}
+        >
+          NextMomentia
+        </span>
       </Link>
 
       {/* === DESKTOP NAV === */}

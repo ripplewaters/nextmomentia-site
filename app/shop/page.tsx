@@ -2,53 +2,66 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { useGLTF, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
-function RotatingTShirt() {
-  const { scene } = useGLTF('models/shop_tshirt.glb') as any
+// ❤️ Röd kromad tröja med balanserad glans (utan HDRI)
+function TShirtWithPrint() {
+  const { scene } = useGLTF('/models/shop_tshirt.glb') as any
   const shirtRef = useRef<THREE.Group>(null)
+  const fabricNormal = useLoader(THREE.TextureLoader, '/textures/fabric_normal.png')
 
-  // mjuk, stabil autospin
-  useFrame(() => {
-    if (shirtRef.current) shirtRef.current.rotation.y += 0.004
+  const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, { format: THREE.RGBAFormat })
+  const cubeCamera = new THREE.CubeCamera(0.1, 10, cubeRenderTarget)
+
+  fabricNormal.wrapS = fabricNormal.wrapT = THREE.RepeatWrapping
+  fabricNormal.repeat.set(2, 2)
+
+  // 🔴 Ljus röd-krom – varm och glansig, ej plastig
+  const redChromeMaterial = new THREE.MeshPhysicalMaterial({
+    color: '#ff3333',
+    metalness: 0.95,
+    roughness: 0.1,
+    clearcoat: 1.1,
+    clearcoatRoughness: 1.5,
+    sheen: 0.4,
+    sheenColor: new THREE.Color('#ffd6d6'),
+    reflectivity: 1.0,
+    envMap: cubeRenderTarget.texture,
+    envMapIntensity: 0.95,
+    normalMap: fabricNormal,
   })
 
-  // material
   scene.traverse((child: any) => {
     if (child.isMesh) {
-      child.material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color('#ff3b2e'),
-        roughness: 0.45,
-        metalness: 0.18,
-      })
+      child.material = redChromeMaterial
       child.castShadow = true
       child.receiveShadow = true
     }
   })
 
-  // uppdatera world innan vi mäter box
-  scene.updateMatrixWorld(true)
+  useFrame(({ gl, scene: mainScene }) => {
+    if (!shirtRef.current) return
+    shirtRef.current.rotation.y += 0.004
+    cubeCamera.update(gl, mainScene)
+  })
 
-  // centrera kring geometrisk mitt och lyft lite mot bröstet
+  // centrera modellen
+  scene.updateMatrixWorld(true)
   const box = new THREE.Box3().setFromObject(scene)
   const center = new THREE.Vector3()
   const size = new THREE.Vector3()
   box.getCenter(center)
   box.getSize(size)
-
-  // flytta så scenens centrum hamnar vid origo
   scene.position.sub(center)
-  // bias uppåt så pivot hamnar närmare bröstet, inte nacken
   scene.position.y += size.y * 0.12
 
-  // lägg gruppen något högre i canvasen så hela syns
   return (
     <group
       ref={shirtRef}
       scale={1.85}
-      position={[0, 0.04, 0]}   // positiv Y = högre upp i rutan
+      position={[0, 0.04, 0]}
       rotation={[0, Math.PI, 0]}
     >
       <primitive object={scene} />
@@ -84,7 +97,7 @@ export default function ShopPage() {
         alignItems: 'center',
       }}
     >
-      {/* bakgrund */}
+      {/* 🌌 Bakgrund */}
       {!isIOS ? (
         <video
           autoPlay
@@ -121,68 +134,40 @@ export default function ShopPage() {
 
       <NavBar />
 
-      {/* logo */}
+      {/* ✨ Glow-text längst upp */}
       <img
-        src="/icon.png"
-        alt="NextMomentia Eye Logo"
+        src="/textures/text2.png"
+        alt="NextMomentia Title"
         style={{
-          width: '80px',
-          marginTop: '6rem',
-          marginBottom: '0.4rem',
-          animation: 'eyeGlow 4s ease-in-out infinite',
-          zIndex: 4,
-          filter: 'drop-shadow(0 0 30px rgba(168,217,255,0.5))',
+          position: 'absolute',
+          top: '6.5rem',
+          width: 'min(70vw, 420px)',
+          zIndex: 5,
+          animation: 'glowText 6s ease-in-out infinite',
+          filter:
+            'drop-shadow(0 0 25px rgba(150,220,255,0.8)) drop-shadow(0 0 60px rgba(150,220,255,0.4))',
         }}
       />
 
-      {/* titel */}
-      <div
-        style={{
-          padding: '0.5rem 1.2rem',
-          borderRadius: '16px',
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 0 25px rgba(168,217,255,0.25)',
-          zIndex: 3,
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 'clamp(1rem, 2vw + 0.4rem, 1.5rem)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: 0,
-            textShadow: '0 0 25px rgba(168,217,255,0.4)',
-          }}
-        >
-          NextMomentia Shop
-        </h1>
-      </div>
-
-      {/* canvas */}
+      {/* 🧥 3D-tröja */}
       <div
         style={{
           width: 'min(90vw, 500px)',
           height: 'min(90vw, 500px)',
-          marginTop: '1.2rem',
+          marginTop: '12rem',
           zIndex: 5,
         }}
       >
         <Canvas camera={{ position: [0, 0.25, 2.35], fov: 45 }}>
           <ambientLight intensity={1.1} />
-          <hemisphereLight args={[new THREE.Color('#ff9999'), new THREE.Color('#1a0d0d'), 0.6]} />
-          <directionalLight position={[3, 5, 3]} intensity={1.35} color="#ffd8b0" />
+          <hemisphereLight args={[new THREE.Color('#fff8f8'), new THREE.Color('#111'), 0.7]} />
+          <directionalLight position={[3, 5, 3]} intensity={1.25} color="#ffd8b0" />
           <pointLight position={[0, 2, 3]} intensity={1.1} color="#ffb080" />
 
           <Suspense fallback={null}>
-            <RotatingTShirt />
+            <TShirtWithPrint />
           </Suspense>
 
-          {/* enbart horisontell rotation, mittpunkt exakt i canvasens centrum */}
           <OrbitControls
             enablePan={false}
             enableZoom={false}
@@ -194,34 +179,10 @@ export default function ShopPage() {
         </Canvas>
       </div>
 
-      {/* statisk text2 med subtilt vitt glow, lite större */}
+      {/* 📩 Coming soon */}
       <div
         style={{
-          marginTop: '-0.2rem',
-          height: '116px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 6,
-        }}
-      >
-        <img
-          src="/textures/text2.png"
-          alt="T-shirt text"
-          style={{
-            width: 'auto',
-            height: '84px',
-            objectFit: 'contain',
-            filter:
-              'drop-shadow(0 0 3px rgba(255,255,255,0.85)) drop-shadow(0 0 6px rgba(255,255,255,0.28))',
-          }}
-        />
-      </div>
-
-      {/* coming soon */}
-      <div
-        style={{
-          marginTop: '0.6rem',
+          marginTop: '1rem',
           textAlign: 'center',
           zIndex: 6,
           paddingBottom: '2rem',
@@ -275,10 +236,10 @@ export default function ShopPage() {
       </div>
 
       <style jsx global>{`
-        @keyframes eyeGlow {
-          0% { filter: drop-shadow(0 0 15px rgba(173,216,255,0.4)); }
-          50% { filter: drop-shadow(0 0 40px rgba(173,216,255,0.7)); }
-          100% { filter: drop-shadow(0 0 15px rgba(173,216,255,0.4)); }
+        @keyframes glowText {
+          0% { filter: drop-shadow(0 0 15px rgba(173,216,255,0.5)); }
+          50% { filter: drop-shadow(0 0 40px rgba(173,216,255,0.9)); }
+          100% { filter: drop-shadow(0 0 15px rgba(173,216,255,0.5)); }
         }
       `}</style>
     </main>
