@@ -25,7 +25,6 @@ export default function NavBar() {
 
   return (
     <div className={`nav-shell ${spaceGrotesk.className}`}>
-      {/* OUTER SHELL */}
       <svg
         className="nav-shell-bg"
         viewBox="0 0 360 150"
@@ -50,7 +49,6 @@ export default function NavBar() {
         </defs>
 
         <g filter="url(#outerShadow)">
-          {/* huvudform med tjockare botten */}
           <path
             d="
               M16 60
@@ -67,7 +65,6 @@ export default function NavBar() {
             fill="url(#metalBody)"
           />
 
-          {/* side ears */}
           <path
             d="
               M16 60
@@ -93,7 +90,6 @@ export default function NavBar() {
             fill="rgba(8,10,25,0.95)"
           />
 
-          {/* inner outline */}
           <ellipse
             cx="180"
             cy="70"
@@ -106,16 +102,13 @@ export default function NavBar() {
         </g>
       </svg>
 
-      {/* INNER CONTENT */}
       <header className="nav-inner">
         <div className="nav-glass-layer">
-          {/* center glass */}
           <div className="glass-center">
             <div className="glass-center-highlight" />
             <div className="glass-center-noise" />
           </div>
 
-          {/* side bubbles with dynamic labels */}
           <Link
             href={sideLinks[0].href}
             className="glass-side glass-left glass-link"
@@ -131,7 +124,6 @@ export default function NavBar() {
           </Link>
         </div>
 
-        {/* logo medallion – dark 3D sphere */}
         <div className="nav-logo-wrapper">
           <div className="nav-logo-seat">
             <div className="nav-logo-seat-inner" />
@@ -147,10 +139,8 @@ export default function NavBar() {
           </div>
         </div>
 
-        {/* LED orbs bar */}
         <div className="nav-orbs-wrapper">
           <div className="nav-orbs-bar">
-            {/* red = videos */}
             <a
               href="https://www.youtube.com/@NextMomentia"
               target="_blank"
@@ -161,12 +151,10 @@ export default function NavBar() {
               <span className="nav-orb orb-red" />
             </a>
 
-            {/* yellow = shop */}
             <Link href="/shop" className="nav-orb-link" aria-label="Shop">
               <span className="nav-orb orb-yellow" />
             </Link>
 
-            {/* blue = about */}
             <Link href="/about" className="nav-orb-link" aria-label="About">
               <span className="nav-orb orb-blue" />
             </Link>
@@ -176,8 +164,9 @@ export default function NavBar() {
 
       <style jsx global>{`
         .nav-shell {
-          position: absolute;
-          top: 3%;
+          position: fixed;
+          z-index: 20;
+          top: 10px;
           left: 50%;
           transform: translateX(-50%);
           width: min(560px, 94%);
@@ -190,41 +179,6 @@ export default function NavBar() {
           inset: 0;
           width: 100%;
           height: 100%;
-        }
-
-        .nav-shell::before {
-          content: '';
-          position: absolute;
-          top: -4px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 58%;
-          height: 28%;
-          border-radius: 50%;
-          background: radial-gradient(
-            circle at 50% 0%,
-            rgba(255, 255, 255, 0.22),
-            transparent 70%
-          );
-          mix-blend-mode: screen;
-        }
-
-        .nav-shell::after {
-          content: '';
-          position: absolute;
-          bottom: -18px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 66%;
-          height: 30%;
-          border-radius: 50%;
-          background: radial-gradient(
-            ellipse at center,
-            rgba(0, 0, 0, 0.95),
-            transparent 75%
-          );
-          filter: blur(8px);
-          opacity: 0.95;
         }
 
         .nav-inner {
@@ -329,7 +283,7 @@ export default function NavBar() {
         }
 
         .glass-label {
-          font-size: 0.75rem;
+          font-size: 0.85rem;
           color: #f0f6ff;
           letter-spacing: 0.22em;
           text-transform: uppercase;
@@ -340,14 +294,6 @@ export default function NavBar() {
           filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
         }
 
-        .glass-side:hover .glass-label {
-          text-shadow:
-            0 0 10px rgba(255, 255, 255, 0.95),
-            0 0 6px rgba(100, 255, 255, 0.9),
-            0 1px 2px rgba(0, 0, 0, 1);
-        }
-
-        /* ==== LOGO MEDALLION – DARK 3D SPHERE ==== */
         .nav-logo-wrapper {
           position: relative;
           z-index: 3;
@@ -406,7 +352,6 @@ export default function NavBar() {
           mix-blend-mode: screen;
         }
 
-        /* LED bar */
         .nav-orbs-wrapper {
           position: absolute;
           bottom: 12px;
@@ -469,27 +414,27 @@ export default function NavBar() {
 
         @media (max-width: 640px) {
           .nav-shell {
-            top: 2.5%;
-            width: 94%;
-            height: 120px;
+            top: 6px;
+            width: 96%;
+            height: 110px;
           }
           .nav-glass-layer {
-            inset: 10px 20px;
+            inset: 8px 18px;
           }
           .glass-center {
-            width: 78%;
-            height: 56%;
+            width: 80%;
+            height: 54%;
           }
           .glass-side {
             width: 30%;
-            height: 42%;
+            height: 40%;
           }
           .glass-label {
             font-size: 0.7rem;
             letter-spacing: 0.18em;
           }
           .nav-orbs-wrapper {
-            bottom: 8px;
+            bottom: 6px;
           }
         }
       `}</style>

@@ -1,19 +1,82 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import NavBar from '../components/NavBar'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { OrbitControls, Environment, useTexture } from '@react-three/drei'
+import * as THREE from 'three'
+
+function ChromeEarthOrb() {
+  const meshRef = useRef<THREE.Mesh>(null)
+
+  // exakt som i din struktur: public/textures/earth_clouds.jpg
+  const clouds = useTexture('/textures/earth_clouds.jpg')
+
+  useFrame((_, delta) => {
+    if (!meshRef.current) return
+    meshRef.current.rotation.y += delta * 0.25
+    meshRef.current.rotation.x = Math.sin(Date.now() * 0.0003) * 0.25
+  })
+
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[1.05, 64, 64]} />
+      <meshPhysicalMaterial
+        map={clouds}
+        metalness={0.95}
+        roughness={0.15}
+        clearcoat={1}
+        clearcoatRoughness={0.12}
+        reflectivity={1}
+        envMapIntensity={1.4}
+        sheen={0.8}
+        sheenColor={new THREE.Color('#cfe8ff')}
+      />
+    </mesh>
+  )
+}
+
+function StarField() {
+  const count = 650
+  const positions = useMemo(() => {
+    const arr = new Float32Array(count * 3)
+    for (let i = 0; i < count * 3; i += 3) {
+      const radius = 5 + Math.random() * 4.5
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.random() * Math.PI
+      arr[i] = radius * Math.sin(phi) * Math.cos(theta)
+      arr[i + 1] = radius * Math.cos(phi) * 0.6
+      arr[i + 2] = radius * Math.sin(phi) * Math.sin(theta)
+    }
+    return arr
+  }, [])
+
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[positions, 3]} // TS-safe
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.045}
+        color="#b7e2ff"
+        sizeAttenuation
+        transparent
+        opacity={0.8}
+      />
+    </points>
+  )
+}
 
 export default function AboutPage() {
   const [isIOS, setIsIOS] = useState(false)
 
   useEffect(() => {
-    const ua = navigator.userAgent.toLowerCase()
-    if (/iphone|ipad|ipod/.test(ua)) setIsIOS(true)
-
-    const shopBg = document.getElementById('shop-page')
-    if (shopBg) shopBg.style.display = 'none'
-    return () => {
-      if (shopBg) shopBg.style.display = ''
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent.toLowerCase()
+      if (/iphone|ipad|ipod/.test(ua)) setIsIOS(true)
     }
   }, [])
 
@@ -21,20 +84,16 @@ export default function AboutPage() {
     <main
       id="about-page"
       style={{
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        minHeight: '100dvh',
         backgroundColor: '#000',
         color: '#fff',
-        fontFamily: '"Space Grotesk", sans-serif',
         overflow: 'hidden',
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        fontFamily: '"Space Grotesk", system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* === BACKGROUND VIDEO === */}
+      {/* BG */}
       {!isIOS ? (
         <video
           autoPlay
@@ -48,7 +107,7 @@ export default function AboutPage() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            opacity: 0.6,
+            opacity: 0.7,
             zIndex: 0,
           }}
         >
@@ -64,7 +123,7 @@ export default function AboutPage() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            opacity: 0.25,
+            opacity: 0.45,
             zIndex: 0,
           }}
         />
@@ -72,126 +131,155 @@ export default function AboutPage() {
 
       <NavBar />
 
-      {/* === STOR KURSIV BOKSTAV I BAKGRUNDEN === */}
-      <div
-        style={{
-          position: 'absolute',
-          fontFamily: '"Playfair Display", serif',
-          fontStyle: 'italic',
-          fontSize: 'clamp(14rem, 22vw, 26rem)',
-          fontWeight: 400,
-          color: 'rgba(255,255,255,0.04)',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -55%)',
-          letterSpacing: '-0.05em',
-          zIndex: 1,
-          userSelect: 'none',
-        }}
-      >
-        N
-      </div>
+      <section className="about-wrap">
+        <div className="about-card">
+          <div className="about-orb-shell">
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 38 }}
+              gl={{ antialias: true, alpha: true }}
+            >
+              <ambientLight intensity={0.7} />
+              <pointLight position={[3, 4, 4]} intensity={1.4} color="#b7ddff" />
+              <StarField />
+              <ChromeEarthOrb />
+              <Environment preset="city" />
+              <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                rotateSpeed={0.6}
+                maxPolarAngle={Math.PI / 2 + 0.4}
+                minPolarAngle={Math.PI / 2 - 0.4}
+              />
+            </Canvas>
+          </div>
 
-      {/* === GLASS PANEL === */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 3,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backdropFilter: 'blur(14px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(14px) saturate(180%)',
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.18)',
-          borderRadius: '24px',
-          boxShadow: '0 0 50px rgba(173,216,255,0.25), inset 0 0 25px rgba(255,255,255,0.05)',
-          width: 'min(90%, 720px)',
-          padding: '4rem 2rem',
-          textAlign: 'center',
-          transform: 'translateY(-1%)',
-          animation: 'fadeIn 1.4s ease forwards',
-        }}
-      >
-        {/* === LOGO (CENTRERAD) === */}
-        <img
-          src="/icon.png"
-          alt="NextMomentia Logo"
-          style={{
-            display: 'block',
-            margin: '0 auto 2rem auto',
-            width: '160px',
-            height: 'auto',
-            filter: 'drop-shadow(0 0 40px rgba(173,216,255,0.6))',
-            animation: 'pulseGlow 4s ease-in-out infinite',
-          }}
-        />
+          <h1 className="about-title">About NextMomentia</h1>
 
-        {/* === RUBRIK === */}
-        <h1
-          style={{
-            fontSize: 'clamp(1.8rem, 2vw + 1rem, 2.8rem)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            background: 'linear-gradient(90deg,#ffffff,#a8d9ff)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textShadow: '0 0 25px rgba(168,217,255,0.4)',
-            marginBottom: '1.6rem',
-            fontWeight: 700,
-          }}
-        >
-          About NextMomentia
-        </h1>
-
-        {/* === TEXT === */}
-        <p
-          style={{
-            fontSize: '1rem',
-            lineHeight: 1.8,
-            color: 'rgba(255,255,255,0.85)',
-            letterSpacing: '0.02em',
-            textShadow: '0 0 15px rgba(168,217,255,0.15)',
-            maxWidth: '600px',
-            margin: '0 auto',
-          }}
-        >
-          A creative hub where ideas, design, and technology merge into motion.  
-          We believe that meaning emerges from tension, between simplicity and
-          depth, control and chaos.  
-          <br />
-          <br />
-          <span style={{ color: '#a8d9ff', fontWeight: 600 }}>
-            NextMomentia
-          </span>{' '}
-          exists to capture that spark between logic and art.
-        </p>
-      </div>
+          <p className="about-body">
+            NextMomentia is a creative hub where ideas, design and technology
+            are pushed into motion. A place built on tension - between logic and
+            instinct, simplicity and depth, control and chaos.
+            <br />
+            <br />
+            Clips, music, visuals and merch all orbit the same core idea:
+            questioning what we are shown, without losing the curiosity that
+            makes it worth watching.
+          </p>
+        </div>
+      </section>
 
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&display=swap');
 
-        @keyframes pulseGlow {
-          0% {
-            filter: drop-shadow(0 0 8px rgba(173,216,255,0.3));
+        #about-page .about-wrap {
+          position: relative;
+          z-index: 5;
+          min-height: 100dvh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 150px 24px 110px;
+          box-sizing: border-box;
+        }
+
+        #about-page .about-card {
+          width: min(840px, 100%);
+          margin: 0 auto;
+          border-radius: 28px;
+          padding: 26px 34px 34px;
+          box-sizing: border-box;
+          backdrop-filter: blur(18px) saturate(170%);
+          -webkit-backdrop-filter: blur(18px) saturate(170%);
+          background:
+            radial-gradient(
+              circle at 0% 0%,
+              rgba(160, 210, 255, 0.3),
+              transparent 55%
+            ),
+            radial-gradient(
+              circle at 100% 100%,
+              rgba(110, 80, 220, 0.2),
+              transparent 60%
+            ),
+            rgba(4, 6, 18, 0.88);
+          border: 1px solid rgba(175, 215, 255, 0.45);
+          box-shadow:
+            0 26px 60px rgba(0, 0, 0, 0.9),
+            inset 0 1px 16px rgba(255, 255, 255, 0.05);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 20px;
+        }
+
+        .about-orb-shell {
+          width: 100%;
+          max-width: 520px;
+          height: 260px;
+          border-radius: 999px;
+          overflow: hidden;
+          position: relative;
+          background: radial-gradient(
+              circle at 30% 0%,
+              rgba(255, 255, 255, 0.3),
+              transparent 60%
+            ),
+            radial-gradient(circle at 70% 120%, #2f164a, #050713);
+          box-shadow:
+            inset 0 1px 6px rgba(255, 255, 255, 0.5),
+            inset 0 -10px 18px rgba(0, 0, 0, 0.95),
+            0 22px 40px rgba(0, 0, 0, 1);
+        }
+
+        .about-title {
+          font-size: clamp(1.6rem, 2.1vw + 1rem, 2.4rem);
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          background: linear-gradient(90deg, #ffffff, #a8d9ff);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 0 22px rgba(170, 220, 255, 0.45);
+          margin-top: 4px;
+        }
+
+        .about-body {
+          font-size: 1rem;
+          line-height: 1.85;
+          color: rgba(236, 241, 255, 0.92);
+          letter-spacing: 0.02em;
+          max-width: 640px;
+          text-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
+        }
+
+        @media (max-width: 900px) {
+          #about-page .about-wrap {
+            padding: 140px 18px 90px;
           }
-          50% {
-            filter: drop-shadow(0 0 45px rgba(173,216,255,0.7));
+          #about-page .about-card {
+            padding: 22px 20px 26px;
+            border-radius: 22px;
           }
-          100% {
-            filter: drop-shadow(0 0 8px rgba(173,216,255,0.3));
+          .about-orb-shell {
+            height: 220px;
+            max-width: 440px;
           }
         }
 
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
+        @media (max-width: 640px) {
+          #about-page .about-wrap {
+            padding: 132px 14px 80px;
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          #about-page .about-card {
+            padding: 18px 14px 22px;
+            gap: 16px;
+          }
+          .about-orb-shell {
+            height: 200px;
+            max-width: 360px;
+          }
+          .about-body {
+            font-size: 0.95rem;
           }
         }
       `}</style>
