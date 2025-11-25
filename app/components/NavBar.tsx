@@ -25,6 +25,7 @@ export default function NavBar() {
 
   return (
     <div className={`nav-shell ${spaceGrotesk.className}`}>
+      {/* Bakgrundskropp */}
       <svg
         className="nav-shell-bg"
         viewBox="0 0 360 150"
@@ -32,10 +33,10 @@ export default function NavBar() {
       >
         <defs>
           <linearGradient id="metalBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#5d4196" />
-            <stop offset="40%" stopColor="#352b5b" />
-            <stop offset="70%" stopColor="#1a162c" />
-            <stop offset="100%" stopColor="#080611" />
+            <stop offset="0%" stopColor="#6a4de0" />
+            <stop offset="35%" stopColor="#39407c" />
+            <stop offset="70%" stopColor="#152135" />
+            <stop offset="100%" stopColor="#050811" />
           </linearGradient>
 
           <filter id="outerShadow" x="-20%" y="-30%" width="140%" height="180%">
@@ -75,7 +76,7 @@ export default function NavBar() {
               Q32 72 24 60
               Z
             "
-            fill="rgba(8,10,25,0.95)"
+            fill="rgba(4,10,24,0.98)"
           />
           <path
             d="
@@ -87,7 +88,7 @@ export default function NavBar() {
               Q328 72 336 60
               Z
             "
-            fill="rgba(8,10,25,0.95)"
+            fill="rgba(4,10,24,0.98)"
           />
 
           <ellipse
@@ -95,14 +96,15 @@ export default function NavBar() {
             cy="70"
             rx="112"
             ry="38"
-            fill="rgba(40,75,120,0.45)"
-            stroke="#41d7ff"
-            strokeWidth="2.2"
+            fill="rgba(20,80,120,0.42)"
+            stroke="#46f0ff"
+            strokeWidth="2.3"
           />
         </g>
       </svg>
 
       <header className="nav-inner">
+        {/* Glas + sidoknappar */}
         <div className="nav-glass-layer">
           <div className="glass-center">
             <div className="glass-center-highlight" />
@@ -111,23 +113,28 @@ export default function NavBar() {
 
           <Link
             href={sideLinks[0].href}
-            className="glass-side glass-left glass-link"
+            className="glass-side glass-left glass-link glass-left-unique"
           >
             <span className="glass-label">{sideLinks[0].label}</span>
           </Link>
 
           <Link
             href={sideLinks[1].href}
-            className="glass-side glass-right glass-link"
+            className="glass-side glass-right glass-link glass-right-unique"
           >
             <span className="glass-label">{sideLinks[1].label}</span>
           </Link>
         </div>
 
+        {/* Logo-pod */}
         <div className="nav-logo-wrapper">
           <div className="nav-logo-seat">
             <div className="nav-logo-seat-inner" />
-            <Link href="/" aria-label="NextMomentia home" className="nav-logo-link">
+            <Link
+              href="/"
+              aria-label="NextMomentia home"
+              className="nav-logo-link"
+            >
               <Image
                 src="/icon.png"
                 alt="NextMomentia Eye Logo"
@@ -139,39 +146,54 @@ export default function NavBar() {
           </div>
         </div>
 
+        {/* CTA + orbs */}
         <div className="nav-orbs-wrapper">
-          <div className="nav-orbs-bar">
+          <div className="nav-cta-stack">
+            {/* Glas-modul under CTA */}
+            <div className="nav-cta-glass" />
+
             <a
               href="https://www.youtube.com/@NextMomentia"
               target="_blank"
               rel="noopener noreferrer"
-              className="nav-orb-link"
-              aria-label="Videos"
+              className="nav-cta-main"
             >
-              <span className="nav-orb orb-red" />
+              Explore
             </a>
 
-            <Link href="/shop" className="nav-orb-link" aria-label="Shop">
-              <span className="nav-orb orb-yellow" />
-            </Link>
+            <div className="nav-orbs-bar">
+              <a
+                href="https://www.youtube.com/@NextMomentia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-orb-link"
+                aria-label="Videos"
+              >
+                <span className="nav-orb orb-red" />
+              </a>
 
-            <Link href="/about" className="nav-orb-link" aria-label="About">
-              <span className="nav-orb orb-blue" />
-            </Link>
+              <Link href="/shop" className="nav-orb-link" aria-label="Shop">
+                <span className="nav-orb orb-yellow" />
+              </Link>
+
+              <Link href="/about" className="nav-orb-link" aria-label="About">
+                <span className="nav-orb orb-blue" />
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
       <style jsx global>{`
         .nav-shell {
-          position: fixed;
-          z-index: 20;
-          top: 10px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(560px, 94%);
-          height: 130px;
-          pointer-events: none;
+            position: fixed;
+  z-index: 20;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 94%);  /* ← fix: inte 96% längre */
+  height: 130px;           /* lite högre så allt får plats snyggt */
+  pointer-events: none;
         }
 
         .nav-shell-bg {
@@ -192,7 +214,7 @@ export default function NavBar() {
 
         .nav-glass-layer {
           position: absolute;
-          inset: 12px 26px;
+          inset: 8px 18px;    /* mobil-look som bas */
         }
 
         .glass-center {
@@ -200,21 +222,25 @@ export default function NavBar() {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -52%);
-          width: 72%;
-          height: 58%;
-          border-radius: 999px;
+          width: 80%;         /* mobil-look */
+          height: 54%;        /* mobil-look */
+          border-radius: 199px 199px 999px 999px;
           background:
-            radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.32), transparent 60%),
+            radial-gradient(
+              circle at 30% 0%,
+              rgba(255, 255, 255, 0.32),
+              transparent 60%
+            ),
             linear-gradient(
               180deg,
-              rgba(70, 110, 190, 0.48),
-              rgba(32, 45, 85, 0.82),
-              rgba(8, 12, 25, 1)
+              rgba(60, 170, 190, 0.55),
+              rgba(20, 60, 110, 0.88),
+              rgba(4, 10, 24, 1)
             );
-          border: 1.6px solid rgba(180, 215, 255, 0.45);
+          border: 1.7px solid rgba(150, 230, 255, 0.58);
           box-shadow:
-            inset 0 1px 6px rgba(255, 255, 255, 0.45),
-            inset 0 -6px 14px rgba(0, 0, 0, 0.9);
+            inset 0 1px 7px rgba(255, 255, 255, 0.5),
+            inset 0 -7px 16px rgba(0, 0, 0, 0.95);
           backdrop-filter: blur(26px);
           -webkit-backdrop-filter: blur(26px);
           overflow: hidden;
@@ -229,7 +255,7 @@ export default function NavBar() {
           border-radius: 999px;
           background: radial-gradient(
             circle at 50% 0%,
-            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0.32),
             rgba(255, 255, 255, 0) 70%
           );
         }
@@ -251,54 +277,85 @@ export default function NavBar() {
           position: absolute;
           top: 50%;
           transform: translateY(-54%);
-          width: 26%;
-          height: 44%;
+          width: 30%;         /* mobil-look */
+          height: 40%;        /* mobil-look */
           border-radius: 999px;
           background:
-            radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.25), transparent 60%),
+            radial-gradient(
+              circle at 30% 0%,
+              rgba(255, 255, 255, 0.3),
+              transparent 60%
+            ),
             linear-gradient(
-              160deg,
-              rgba(130, 175, 255, 0.4),
-              rgba(60, 200, 200, 0.45),
-              rgba(10, 20, 40, 0.88)
+              150deg,
+              rgba(125, 225, 230, 0.9),
+              rgba(70, 145, 230, 0.9),
+              rgba(20, 40, 80, 1)
             );
-          border: 1.8px solid rgba(170, 230, 255, 0.7);
+          border: 1.9px solid rgba(185, 245, 255, 0.85);
           box-shadow:
-            inset 0 2px 6px rgba(255, 255, 255, 0.4),
-            inset 0 -4px 10px rgba(0, 0, 0, 0.9);
+            inset 0 2px 7px rgba(255, 255, 255, 0.5),
+            inset 0 -4px 12px rgba(0, 0, 0, 0.95);
           backdrop-filter: blur(22px);
           -webkit-backdrop-filter: blur(22px);
           display: flex;
           align-items: center;
           justify-content: center;
           text-decoration: none;
+          transition:
+            transform 0.16s ease-out,
+            box-shadow 0.16s ease-out,
+            filter 0.16s ease-out;
         }
 
         .glass-left {
-          left: 2%;
+          left: 16%;          /* intryckta mot mitten */
         }
 
         .glass-right {
-          right: 2%;
+          right: 16%;
         }
 
         .glass-label {
-          font-size: 0.85rem;
-          color: #f0f6ff;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          text-shadow:
-            0 0 6px rgba(0, 0, 0, 0.9),
-            0 0 10px rgba(255, 255, 255, 0.35),
-            0 1px 3px rgba(0, 0, 0, 1);
-          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  color: #f4f9ff;
+
+  /* Embossed / upphöjd text */
+  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.22);
+
+  text-shadow:
+    /* topphighlight – gör texten “kupad” uppåt */
+    0 -1px 1.5px rgba(255, 255, 255, 0.32),
+
+    /* glow runt texten – samma språk som CTA */
+    0 0 5px rgba(150, 230, 255, 0.6),
+    0 0 11px rgba(100, 200, 255, 0.45),
+
+    /* djup under texten */
+    0 1.5px 2.5px rgba(0, 0, 0, 0.9),
+    0 3px 4.5px rgba(0, 0, 0, 0.7);
+}
+
+
+        .glass-link:hover {
+          filter: brightness(1.08)
+            drop-shadow(0 0 8px rgba(150, 255, 255, 0.35));
+          box-shadow:
+            inset 0 2px 4px rgba(255, 255, 255, 0.4),
+            inset 0 -3px 7px rgba(0, 0, 0, 1),
+            0 10px 22px rgba(0, 0, 0, 1);
         }
 
         .nav-logo-wrapper {
-          position: relative;
-          z-index: 3;
-          transform: translateY(-4px);
-        }
+  position: relative;
+  z-index: 4;              /* loggan överst */
+  transform: translateY(-4px);
+}
 
         .nav-logo-seat {
           position: relative;
@@ -306,9 +363,15 @@ export default function NavBar() {
           height: 62px;
           border-radius: 999px;
           background:
-            radial-gradient(circle at 30% 10%, #b9baff 0%, #5b4fc7 35%, #26214f 70%, #050513 100%);
+            radial-gradient(
+              circle at 30% 10%,
+              #c3d4ff 0%,
+              #6b59ff 35%,
+              #26214f 70%,
+              #050513 100%
+            );
           box-shadow:
-            inset 0 2px 4px rgba(255, 255, 255, 0.22),
+            inset 0 2px 4px rgba(255, 255, 255, 0.24),
             inset 0 -5px 9px rgba(0, 0, 0, 0.96),
             0 7px 16px rgba(0, 0, 0, 1);
           display: flex;
@@ -322,7 +385,13 @@ export default function NavBar() {
           inset: 5px;
           border-radius: 999px;
           background:
-            radial-gradient(circle at 40% 18%, #ffffff 0%, #d4d6ff 18%, #4338a3 55%, #050614 100%);
+            radial-gradient(
+              circle at 40% 18%,
+              #ffffff 0%,
+              #dde4ff 18%,
+              #4953cf 55%,
+              #050614 100%
+            );
           box-shadow:
             inset 0 2px 3px rgba(255, 255, 255, 0.3),
             inset 0 -3px 6px rgba(0, 0, 0, 0.95);
@@ -335,10 +404,10 @@ export default function NavBar() {
           background: radial-gradient(
             circle at 30% 20%,
             rgba(255, 255, 255, 0.55),
-            rgba(120, 140, 255, 0.2),
-            rgba(0, 0, 0, 0.8)
+            rgba(150, 210, 255, 0.3),
+            rgba(0, 0, 0, 0.85)
           );
-          opacity: 0.6;
+          opacity: 0.7;
           mix-blend-mode: screen;
         }
 
@@ -347,23 +416,172 @@ export default function NavBar() {
           height: 34px;
           filter:
             drop-shadow(0 1px 2px rgba(0, 0, 0, 1))
-            drop-shadow(0 0 12px rgba(255, 255, 255, 0.98));
+            drop-shadow(0 0 14px rgba(255, 255, 255, 1));
           opacity: 0.98;
           mix-blend-mode: screen;
         }
 
+        /* CTA + orbs */
         .nav-orbs-wrapper {
+  position: absolute;
+  top: 90px;               /* lite närmare cirkeln */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;              /* hela Explore-blocket går bakom cirkeln */
+}
+
+        .nav-cta-stack {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0;
+        }
+
+        /* Modulen under CTA – mindre nu */
+        .nav-cta-glass {
           position: absolute;
-          bottom: 12px;
+          top: 6px;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 4;
+          width: 110%;        /* lite bredare än CTA */
+          height: 114%;       /* mindre än innan */
+          border-radius: 290px 290px 999px 999px;
+          background:
+            radial-gradient(
+              circle at 20% 0%,
+              rgba(255, 255, 255, 0.25),
+              transparent 60%
+            ),
+            linear-gradient(
+              180deg,
+              rgba(90, 200, 235, 0.85),
+              rgba(40, 90, 170, 0.95),
+              rgba(10, 20, 45, 1)
+            );
+          border: 1.8px solid rgba(185, 245, 255, 0.9);
+          box-shadow:
+            inset 0 2px 7px rgba(255, 255, 255, 0.5),
+            inset 0 -5px 14px rgba(0, 0, 0, 0.95),
+            0 10px 22px rgba(0, 0, 0, 0.9);
+          backdrop-filter: blur(22px);
+          -webkit-backdrop-filter: blur(22px);
+          z-index: 0;
         }
+
+        .nav-cta-main {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.5rem 2.6rem;
+  border-radius: 299px 299px 999px 999px;
+
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #f4faff;
+
+  /* -------- EMBOSSED EFFECT -------- */
+  /* Inner bright stroke + lifted black shadow */
+  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.28);
+
+  text-shadow:
+    /* top highlight - pushes text "upwards" */
+    0 -1px 2px rgba(255, 255, 255, 0.35),
+
+    /* main outer glow – same vibe som About/Shop */
+    0 0 6px rgba(150, 230, 255, 0.65),
+    0 0 12px rgba(100, 200, 255, 0.45),
+
+    /* subtle depth directly under text */
+    0 2px 3px rgba(0, 0, 0, 0.85),
+
+    /* deeper embossed shadow */
+    0 3px 5px rgba(0, 0, 0, 0.65);
+
+  /* ---------------------------------- */
+
+  background:
+    radial-gradient(
+      circle at 30% 0%,
+      rgba(255, 255, 255, 0.22),
+      transparent 55%
+    ),
+    linear-gradient(
+      150deg,
+      rgba(130, 235, 240, 0.95),
+      rgba(80, 155, 250, 0.95),
+      rgba(18, 40, 90, 1)
+    );
+
+  border: 1.9px solid rgba(190, 245, 255, 0.9);
+  box-shadow:
+    inset 0 2px 6px rgba(255, 255, 255, 0.4),
+    inset 0 -4px 9px rgba(0, 0, 0, 1),
+    0 10px 22px rgba(0, 0, 0, 0.9);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    filter 0.2s ease-out;
+}
+
+.nav-cta-main:hover {
+  transform: translateY(-1px) scale(1.03);
+  filter: brightness(1.07);
+  text-shadow:
+    0 -1px 2px rgba(255, 255, 255, 0.4),
+    0 0 8px rgba(170, 255, 255, 0.75),
+    0 0 14px rgba(120, 240, 255, 0.55),
+    0 2px 4px rgba(0, 0, 0, 1),
+    0 4px 6px rgba(0, 0, 0, 0.9);
+}
+
+.nav-cta-main:active {
+  transform: translateY(0) scale(0.97);
+  filter: brightness(0.95);
+  text-shadow:
+    0 -0.5px 1.5px rgba(255, 255, 255, 0.25),
+    0 0 4px rgba(150, 255, 255, 0.4),
+    0 2px 2px rgba(0, 0, 0, 1),
+    0 3px 4px rgba(0, 0, 0, 1);
+}
+
+
+.nav-cta-main:hover {
+  transform: translateY(-1px) scale(1.03);
+  filter: brightness(1.05);
+  box-shadow:
+    inset 0 2px 6px rgba(255, 255, 255, 0.42),
+    inset 0 -4px 10px rgba(0, 0, 0, 1),
+    0 14px 28px rgba(0, 0, 0, 0.9);
+}
+
+.nav-cta-main:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow:
+    inset 0 1px 3px rgba(255, 255, 255, 0.28),
+    inset 0 -3px 7px rgba(0, 0, 0, 1),
+    0 6px 16px rgba(0, 0, 0, 1);
+  filter: brightness(0.96);
+}
+
 
         .nav-orbs-bar {
           position: relative;
-          padding: 4px 20px;
-          border-radius: 999px;
+          z-index: 1;
+          margin-top: 3px;
+          padding: 3px 16px 4px;    /* mobil-look */
+          border-radius: 99px 99px 999px 999px;
           background:
             radial-gradient(circle at 50% 0%, #ffffff, #dde3f3 40%, #8d96b2 90%),
             linear-gradient(180deg, #d5ddf2 0%, #676f8d 100%);
@@ -398,10 +616,20 @@ export default function NavBar() {
           background: radial-gradient(circle, #ffe3e3, #ff3d47 45%, #7f0b18 95%);
         }
         .orb-yellow {
-          background: radial-gradient(circle, #fff8d4, #ffd94a 45%, #9d6b00 95%);
+          background: radial-gradient(
+            circle,
+            #fff8d4,
+            #ffd94a 45%,
+            #9d6b00 95%
+          );
         }
         .orb-blue {
-          background: radial-gradient(circle, #e3f3ff, #4fb0ff 45%, #0a3d7c 95%);
+          background: radial-gradient(
+            circle,
+            #e3f3ff,
+            #4fb0ff 45%,
+            #0a3d7c 95%
+          );
         }
 
         .nav-orb-link:hover .nav-orb {
@@ -412,30 +640,22 @@ export default function NavBar() {
           transform: translateY(-1px);
         }
 
+        /* Unika side-shapes */
+        .glass-left-unique {
+          border-radius: 299px 999px 299px 999px;
+        }
+
+        .glass-right-unique {
+          border-radius: 999px 299px 999px 299px;
+        }
+
+        .glass-left-unique:hover,
+        .glass-right-unique:hover {
+          filter: brightness(1.05);
+        }
+
         @media (max-width: 640px) {
-          .nav-shell {
-            top: 6px;
-            width: 96%;
-            height: 110px;
-          }
-          .nav-glass-layer {
-            inset: 8px 18px;
-          }
-          .glass-center {
-            width: 80%;
-            height: 54%;
-          }
-          .glass-side {
-            width: 30%;
-            height: 40%;
-          }
-          .glass-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-          }
-          .nav-orbs-wrapper {
-            bottom: 6px;
-          }
+          /* Behåll bara små tweaks här om du vill justera text senare */
         }
       `}</style>
     </div>

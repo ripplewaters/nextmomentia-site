@@ -156,9 +156,7 @@ export default function AboutPage() {
           <h1 className="about-title">About NextMomentia</h1>
 
           <p className="about-body">
-            NextMomentia is a creative hub where ideas, design and technology
-            are pushed into motion. A place built on tension - between logic and
-            instinct, simplicity and depth, control and chaos.
+            Dont't Just Watch. React.
             <br />
             <br />
             Clips, music, visuals and merch all orbit the same core idea:

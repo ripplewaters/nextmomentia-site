@@ -23,8 +23,9 @@ function RealisticEarth() {
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime() * 0.15
-    if (sunLight.current)
+    if (sunLight.current) {
       sunLight.current.position.set(Math.sin(t) * 10, 2, Math.cos(t) * 10)
+    }
 
     if (earthRef.current) earthRef.current.rotation.y += 0.0008
     if (cloudRef.current) cloudRef.current.rotation.y += 0.001
@@ -38,7 +39,7 @@ function RealisticEarth() {
 
   return (
     <>
-      {/* Jord */}
+      {/* Earth */}
       <mesh ref={earthRef} scale={2.5}>
         <sphereGeometry args={[1, 128, 128]} />
         <meshPhongMaterial
@@ -54,20 +55,20 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* Glöd */}
+      {/* Glow */}
       <mesh ref={glowRef} scale={2.52}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
           map={night}
           transparent
           opacity={0.3}
-          color={'#ffcc88'}
+          color="#ffcc88"
           blending={THREE.AdditiveBlending}
           side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* Moln */}
+      {/* Clouds */}
       <mesh ref={cloudRef} scale={2.54}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshPhongMaterial
@@ -78,7 +79,7 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* Atmosfär */}
+      {/* Atmosphere */}
       <mesh scale={2.56}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
@@ -89,7 +90,7 @@ function RealisticEarth() {
         />
       </mesh>
 
-      {/* Ljus */}
+      {/* Lights */}
       <ambientLight intensity={0.3} />
       <directionalLight
         ref={sunLight}
@@ -126,7 +127,7 @@ export default function Home() {
         position: 'relative',
       }}
     >
-      {/* --- VIDEO BACKGROUND --- */}
+      {/* Video background */}
       <video
         autoPlay
         loop
@@ -147,14 +148,14 @@ export default function Home() {
         <source src="/videos/shop_bg_earth.mp4" type="video/mp4" />
       </video>
 
-      {/* --- NAVBAR --- */}
+      {/* NavBar (with attached CTA) */}
       <div
         style={{
           position: 'absolute',
           top: '2rem',
           left: '50%',
           transform: 'translateX(-50%)',
-          zIndex: 10,
+          zIndex: 20,
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
@@ -163,11 +164,11 @@ export default function Home() {
         <NavBar />
       </div>
 
-      {/* --- EARTH SECTION --- */}
+      {/* Earth lower down */}
       <div
         style={{
           position: 'absolute',
-          top: '50%',
+          top: '64%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           width: 'min(75vw, 520px)',
@@ -211,66 +212,6 @@ export default function Home() {
         </Canvas>
       </div>
 
-      {/* --- CTA --- */}
-      <section
-        style={{
-          position: 'absolute',
-          bottom: '8%',
-          opacity: 0.9,
-          letterSpacing: '0.5px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem',
-          zIndex: 12,
-          textAlign: 'center',
-        }}
-      >
-        <p
-          style={{
-            opacity: 0.88,
-            letterSpacing: '0.42em',
-            fontSize: '0.8rem',
-            textTransform: 'uppercase',
-          }}
-        >
-          Don't Just Watch. React.
-        </p>
-        <a
-          href="https://www.youtube.com/@NextMomentia"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.6rem',
-            borderRadius: '999px',
-            background:
-              'linear-gradient(135deg, rgba(130,200,255,0.25) 0%, rgba(255,255,255,0.75) 100%)',
-            color: '#051035',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textDecoration: 'none',
-            boxShadow: '0 12px 40px rgba(140,210,255,0.35)',
-            backdropFilter: 'blur(6px)',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)'
-            e.currentTarget.style.boxShadow =
-              '0 18px 55px rgba(170,225,255,0.45)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0) scale(1)'
-            e.currentTarget.style.boxShadow =
-              '0 12px 40px rgba(140,210,255,0.35)'
-          }}
-        >
-          Explore the Channel
-        </a>
-      </section>
-
       <style jsx global>{`
         @keyframes glowpulse {
           0% {
@@ -289,13 +230,13 @@ export default function Home() {
 
         @keyframes pulseGlow {
           0% {
-            filter: drop-shadow(0 0 10px rgba(168,217,255,0.3));
+            filter: drop-shadow(0 0 10px rgba(168, 217, 255, 0.3));
           }
           50% {
-            filter: drop-shadow(0 0 30px rgba(168,217,255,0.65));
+            filter: drop-shadow(0 0 30px rgba(168, 217, 255, 0.65));
           }
           100% {
-            filter: drop-shadow(0 0 10px rgba(168,217,255,0.3));
+            filter: drop-shadow(0 0 10px rgba(168, 217, 255, 0.3));
           }
         }
       `}</style>
