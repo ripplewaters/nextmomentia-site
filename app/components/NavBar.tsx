@@ -25,92 +25,92 @@ export default function NavBar() {
 
   return (
     <div className={`nav-shell ${spaceGrotesk.className}`}>
-      {/* Bakgrundskropp */}
+      {/* Teal/glas skepp i bakgrunden */}
       <svg
         className="nav-shell-bg"
         viewBox="0 0 360 150"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          <linearGradient id="metalBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#6a4de0" />
-            <stop offset="35%" stopColor="#39407c" />
-            <stop offset="70%" stopColor="#152135" />
-            <stop offset="100%" stopColor="#050811" />
-          </linearGradient>
+          {/* Teal/glass kropp */}
+          <radialGradient id="bgOrbGradient" cx="50%" cy="8%" r="85%">
+            <stop offset="0%" stopColor="#e4fff9" stopOpacity="0.9" />
+            <stop offset="25%" stopColor="#a9ffe9" stopOpacity="0.9" />
+            <stop offset="60%" stopColor="#2c8fa7" stopOpacity="0.98" />
+            <stop offset="100%" stopColor="#041320" stopOpacity="1" />
+          </radialGradient>
 
-          <filter id="outerShadow" x="-20%" y="-30%" width="140%" height="180%">
+          {/* Soft highlight */}
+          <radialGradient id="bgOrbHighlight" cx="50%" cy="0%" r="90%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+            <stop offset="30%" stopColor="rgba(170,255,245,0.65)" />
+            <stop offset="75%" stopColor="rgba(0,0,0,0)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+          </radialGradient>
+
+          {/* Glow / shadow */}
+          <filter id="bgOrbGlow" x="-30%" y="-40%" width="160%" height="200%">
             <feDropShadow
               dx="0"
-              dy="18"
-              stdDeviation="12"
-              floodColor="rgba(0,0,0,0.95)"
+              dy="16"
+              stdDeviation="14"
+              floodColor="rgba(0,0,0,0.96)"
+              floodOpacity="1"
             />
           </filter>
         </defs>
 
-        <g filter="url(#outerShadow)">
+        <g filter="url(#bgOrbGlow)">
+          {/* Huvudbågen */}
           <path
             d="
-              M16 60
-              Q36 34 78 30
-              L282 28
-              Q318 32 344 50
-              Q354 58 354 74
-              Q354 90 342 102
-              Q314 128 182 132
-              Q52 128 26 102
-              Q10 86 12 72
-              Q14 64 16 60 Z
-            "
-            fill="url(#metalBody)"
-          />
-
-          <path
-            d="
-              M16 60
-              Q6 66 6 76
-              Q6 96 26 110
-              Q52 128 90 122
-              Q62 106 50 90
-              Q32 72 24 60
+              M18 86
+              Q180 40 342 86
+              Q340 104 332 116
+              Q258 134 180 136
+              Q102 134 28 116
+              Q20 104 18 86
               Z
             "
-            fill="rgba(4,10,24,0.98)"
-          />
-          <path
-            d="
-              M344 60
-              Q354 66 354 76
-              Q354 96 334 110
-              Q308 128 270 122
-              Q298 106 310 90
-              Q328 72 336 60
-              Z
-            "
-            fill="rgba(4,10,24,0.98)"
+            fill="url(#bgOrbGradient)"
           />
 
-          <ellipse
-            cx="180"
-            cy="70"
-            rx="112"
-            ry="38"
-            fill="rgba(20,80,120,0.42)"
-            stroke="#46f0ff"
-            strokeWidth="2.3"
+          {/* Turkos rim (lite tunnare) */}
+          <path
+            d="
+              M26 84
+              Q180 44 334 84
+              Q332 96 326 106
+              Q258 122 180 124
+              Q102 122 34 106
+              Q28 96 26 84
+              Z
+            "
+            fill="none"
+            stroke="rgba(80,255,255,0.9)"
+            strokeWidth="1.4"
+          />
+
+          {/* Glas-highlight */}
+          <path
+            d="
+              M30 82
+              Q180 48 330 82
+              Q328 88 324 94
+              Q258 110 180 112
+              Q102 110 36 94
+              Q32 88 30 82
+              Z
+            "
+            fill="url(#bgOrbHighlight)"
+            style={{ mixBlendMode: 'screen' as const }}
           />
         </g>
       </svg>
 
       <header className="nav-inner">
-        {/* Glas + sidoknappar */}
+        {/* Shop / About direkt på skeppet */}
         <div className="nav-glass-layer">
-          <div className="glass-center">
-            <div className="glass-center-highlight" />
-            <div className="glass-center-noise" />
-          </div>
-
           <Link
             href={sideLinks[0].href}
             className="glass-side glass-left glass-link glass-left-unique"
@@ -149,7 +149,6 @@ export default function NavBar() {
         {/* CTA + orbs */}
         <div className="nav-orbs-wrapper">
           <div className="nav-cta-stack">
-            {/* Glas-modul under CTA */}
             <div className="nav-cta-glass" />
 
             <a
@@ -186,14 +185,15 @@ export default function NavBar() {
 
       <style jsx global>{`
         .nav-shell {
-            position: fixed;
-  z-index: 20;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(560px, 94%);  /* ← fix: inte 96% längre */
-  height: 130px;           /* lite högre så allt får plats snyggt */
-  pointer-events: none;
+          position: fixed;
+          z-index: 20;
+          top: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          transform-origin: top center;
+          width: min(560px, 94%);
+          height: 130px;
+          pointer-events: none;
         }
 
         .nav-shell-bg {
@@ -214,71 +214,15 @@ export default function NavBar() {
 
         .nav-glass-layer {
           position: absolute;
-          inset: 8px 18px;    /* mobil-look som bas */
-        }
-
-        .glass-center {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -52%);
-          width: 80%;         /* mobil-look */
-          height: 54%;        /* mobil-look */
-          border-radius: 199px 199px 999px 999px;
-          background:
-            radial-gradient(
-              circle at 30% 0%,
-              rgba(255, 255, 255, 0.32),
-              transparent 60%
-            ),
-            linear-gradient(
-              180deg,
-              rgba(60, 170, 190, 0.55),
-              rgba(20, 60, 110, 0.88),
-              rgba(4, 10, 24, 1)
-            );
-          border: 1.7px solid rgba(150, 230, 255, 0.58);
-          box-shadow:
-            inset 0 1px 7px rgba(255, 255, 255, 0.5),
-            inset 0 -7px 16px rgba(0, 0, 0, 0.95);
-          backdrop-filter: blur(26px);
-          -webkit-backdrop-filter: blur(26px);
-          overflow: hidden;
-        }
-
-        .glass-center-highlight {
-          position: absolute;
-          top: -10%;
-          left: -5%;
-          width: 110%;
-          height: 48%;
-          border-radius: 999px;
-          background: radial-gradient(
-            circle at 50% 0%,
-            rgba(255, 255, 255, 0.32),
-            rgba(255, 255, 255, 0) 70%
-          );
-        }
-
-        .glass-center-noise {
-          position: absolute;
-          inset: 0;
-          background-image: radial-gradient(
-            circle at 1px 1px,
-            rgba(255, 255, 255, 0.1) 1px,
-            transparent 0
-          );
-          background-size: 3px 3px;
-          opacity: 0.35;
-          mix-blend-mode: soft-light;
+          inset: 8px 18px;
         }
 
         .glass-side {
           position: absolute;
           top: 50%;
           transform: translateY(-54%);
-          width: 30%;         /* mobil-look */
-          height: 40%;        /* mobil-look */
+          width: 30%;
+          height: 40%;
           border-radius: 999px;
           background:
             radial-gradient(
@@ -292,8 +236,9 @@ export default function NavBar() {
               rgba(70, 145, 230, 0.9),
               rgba(20, 40, 80, 1)
             );
-          border: 1.9px solid rgba(185, 245, 255, 0.85);
+          border: 1.2px solid rgba(80, 255, 255, 0.9);
           box-shadow:
+            0 0 0 0.6px rgba(3, 8, 18, 0.95), /* tunn mörk outline */
             inset 0 2px 7px rgba(255, 255, 255, 0.5),
             inset 0 -4px 12px rgba(0, 0, 0, 0.95);
           backdrop-filter: blur(22px);
@@ -309,7 +254,7 @@ export default function NavBar() {
         }
 
         .glass-left {
-          left: 16%;          /* intryckta mot mitten */
+          left: 16%;
         }
 
         .glass-right {
@@ -317,45 +262,37 @@ export default function NavBar() {
         }
 
         .glass-label {
-  font-family: "Orbitron", sans-serif;
-  font-weight: 700;
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 700;
+          font-size: 0.68rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #f4f9ff;
 
-  color: #f4f9ff;
-
-  /* Embossed / upphöjd text */
-  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.22);
-
-  text-shadow:
-    /* topphighlight – gör texten “kupad” uppåt */
-    0 -1px 1.5px rgba(255, 255, 255, 0.32),
-
-    /* glow runt texten – samma språk som CTA */
-    0 0 5px rgba(150, 230, 255, 0.6),
-    0 0 11px rgba(100, 200, 255, 0.45),
-
-    /* djup under texten */
-    0 1.5px 2.5px rgba(0, 0, 0, 0.9),
-    0 3px 4.5px rgba(0, 0, 0, 0.7);
-}
-
+          -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.22);
+          text-shadow:
+            0 -1px 1.5px rgba(255, 255, 255, 0.32),
+            0 0 5px rgba(150, 230, 255, 0.6),
+            0 0 11px rgba(100, 200, 255, 0.45),
+            0 1.5px 2.5px rgba(0, 0, 0, 0.9),
+            0 3px 4.5px rgba(0, 0, 0, 0.7);
+        }
 
         .glass-link:hover {
           filter: brightness(1.08)
-            drop-shadow(0 0 8px rgba(150, 255, 255, 0.35));
+            drop-shadow(0 0 8px rgba(80, 255, 255, 0.6));
           box-shadow:
+            0 0 0 0.6px rgba(3, 8, 18, 1),
             inset 0 2px 4px rgba(255, 255, 255, 0.4),
             inset 0 -3px 7px rgba(0, 0, 0, 1),
             0 10px 22px rgba(0, 0, 0, 1);
         }
 
         .nav-logo-wrapper {
-  position: relative;
-  z-index: 4;              /* loggan överst */
-  transform: translateY(-4px);
-}
+          position: relative;
+          z-index: 4;
+          transform: translateY(-4px);
+        }
 
         .nav-logo-seat {
           position: relative;
@@ -371,6 +308,7 @@ export default function NavBar() {
               #050513 100%
             );
           box-shadow:
+            0 0 0 0.6px rgba(3, 8, 18, 0.95),
             inset 0 2px 4px rgba(255, 255, 255, 0.24),
             inset 0 -5px 9px rgba(0, 0, 0, 0.96),
             0 7px 16px rgba(0, 0, 0, 1);
@@ -421,14 +359,13 @@ export default function NavBar() {
           mix-blend-mode: screen;
         }
 
-        /* CTA + orbs */
         .nav-orbs-wrapper {
-  position: absolute;
-  top: 90px;               /* lite närmare cirkeln */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;              /* hela Explore-blocket går bakom cirkeln */
-}
+          position: absolute;
+          top: 90px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 2; /* Explore under logg-kulan */
+        }
 
         .nav-cta-stack {
           position: relative;
@@ -438,14 +375,13 @@ export default function NavBar() {
           gap: 0;
         }
 
-        /* Modulen under CTA – mindre nu */
         .nav-cta-glass {
           position: absolute;
           top: 6px;
           left: 50%;
           transform: translateX(-50%);
-          width: 110%;        /* lite bredare än CTA */
-          height: 114%;       /* mindre än innan */
+          width: 110%;
+          height: 114%;
           border-radius: 290px 290px 999px 999px;
           background:
             radial-gradient(
@@ -459,8 +395,9 @@ export default function NavBar() {
               rgba(40, 90, 170, 0.95),
               rgba(10, 20, 45, 1)
             );
-          border: 1.8px solid rgba(185, 245, 255, 0.9);
+          border: 1.2px solid rgba(80, 255, 255, 0.9);
           box-shadow:
+            0 0 0 0.6px rgba(3, 8, 18, 0.95),
             inset 0 2px 7px rgba(255, 255, 255, 0.5),
             inset 0 -5px 14px rgba(0, 0, 0, 0.95),
             0 10px 22px rgba(0, 0, 0, 0.9);
@@ -470,122 +407,91 @@ export default function NavBar() {
         }
 
         .nav-cta-main {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
 
-  padding: 0.5rem 2.6rem;
-  border-radius: 299px 299px 999px 999px;
+          padding: 0.5rem 2.8rem;
+          border-radius: 199px 199px 999px 999px;
 
-  font-family: "Orbitron", sans-serif;
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: #f4faff;
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 700;
+          font-size: 0.72rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          text-decoration: none;
+          color: #f4faff;
 
-  /* -------- EMBOSSED EFFECT -------- */
-  /* Inner bright stroke + lifted black shadow */
-  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.28);
+          -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.28);
+          text-shadow:
+            0 -1px 2px rgba(255, 255, 255, 0.35),
+            0 0 6px rgba(150, 230, 255, 0.65),
+            0 0 12px rgba(100, 200, 255, 0.45),
+            0 2px 3px rgba(0, 0, 0, 0.85),
+            0 3px 5px rgba(0, 0, 0, 0.65);
 
-  text-shadow:
-    /* top highlight - pushes text "upwards" */
-    0 -1px 2px rgba(255, 255, 255, 0.35),
+          background:
+            radial-gradient(
+              circle at 30% 0%,
+              rgba(255, 255, 255, 0.22),
+              transparent 55%
+            ),
+            linear-gradient(
+              150deg,
+              rgba(130, 235, 240, 0.95),
+              rgba(80, 155, 250, 0.95),
+              rgba(18, 40, 90, 1)
+            );
+          border: 1.3px solid rgba(80, 255, 255, 0.9);
+          box-shadow:
+            0 0 0 0.6px rgba(3, 8, 18, 0.95),
+            inset 0 2px 6px rgba(255, 255, 255, 0.4),
+            inset 0 -4px 9px rgba(0, 0, 0, 1),
+            0 10px 22px rgba(0, 0, 0, 0.9);
 
-    /* main outer glow – same vibe som About/Shop */
-    0 0 6px rgba(150, 230, 255, 0.65),
-    0 0 12px rgba(100, 200, 255, 0.45),
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
 
-    /* subtle depth directly under text */
-    0 2px 3px rgba(0, 0, 0, 0.85),
+          transition:
+            transform 0.2s ease-out,
+            box-shadow 0.2s ease-out,
+            filter 0.2s ease-out;
+        }
 
-    /* deeper embossed shadow */
-    0 3px 5px rgba(0, 0, 0, 0.65);
+        .nav-cta-main:hover {
+          transform: translateY(-1px) scale(1.03);
+          filter: brightness(1.07);
+          text-shadow:
+            0 -1px 2px rgba(255, 255, 255, 0.4),
+            0 0 8px rgba(170, 255, 255, 0.75),
+            0 0 14px rgba(120, 240, 255, 0.55),
+            0 2px 4px rgba(0, 0, 0, 1),
+            0 4px 6px rgba(0, 0, 0, 0.9);
+        }
 
-  /* ---------------------------------- */
-
-  background:
-    radial-gradient(
-      circle at 30% 0%,
-      rgba(255, 255, 255, 0.22),
-      transparent 55%
-    ),
-    linear-gradient(
-      150deg,
-      rgba(130, 235, 240, 0.95),
-      rgba(80, 155, 250, 0.95),
-      rgba(18, 40, 90, 1)
-    );
-
-  border: 1.9px solid rgba(190, 245, 255, 0.9);
-  box-shadow:
-    inset 0 2px 6px rgba(255, 255, 255, 0.4),
-    inset 0 -4px 9px rgba(0, 0, 0, 1),
-    0 10px 22px rgba(0, 0, 0, 0.9);
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  transition:
-    transform 0.2s ease-out,
-    box-shadow 0.2s ease-out,
-    filter 0.2s ease-out;
-}
-
-.nav-cta-main:hover {
-  transform: translateY(-1px) scale(1.03);
-  filter: brightness(1.07);
-  text-shadow:
-    0 -1px 2px rgba(255, 255, 255, 0.4),
-    0 0 8px rgba(170, 255, 255, 0.75),
-    0 0 14px rgba(120, 240, 255, 0.55),
-    0 2px 4px rgba(0, 0, 0, 1),
-    0 4px 6px rgba(0, 0, 0, 0.9);
-}
-
-.nav-cta-main:active {
-  transform: translateY(0) scale(0.97);
-  filter: brightness(0.95);
-  text-shadow:
-    0 -0.5px 1.5px rgba(255, 255, 255, 0.25),
-    0 0 4px rgba(150, 255, 255, 0.4),
-    0 2px 2px rgba(0, 0, 0, 1),
-    0 3px 4px rgba(0, 0, 0, 1);
-}
-
-
-.nav-cta-main:hover {
-  transform: translateY(-1px) scale(1.03);
-  filter: brightness(1.05);
-  box-shadow:
-    inset 0 2px 6px rgba(255, 255, 255, 0.42),
-    inset 0 -4px 10px rgba(0, 0, 0, 1),
-    0 14px 28px rgba(0, 0, 0, 0.9);
-}
-
-.nav-cta-main:active {
-  transform: translateY(0) scale(0.97);
-  box-shadow:
-    inset 0 1px 3px rgba(255, 255, 255, 0.28),
-    inset 0 -3px 7px rgba(0, 0, 0, 1),
-    0 6px 16px rgba(0, 0, 0, 1);
-  filter: brightness(0.96);
-}
-
+        .nav-cta-main:active {
+          transform: translateY(0) scale(0.97);
+          filter: brightness(0.95);
+          text-shadow:
+            0 -0.5px 1.5px rgba(255, 255, 255, 0.25),
+            0 0 4px rgba(150, 255, 255, 0.4),
+            0 2px 2px rgba(0, 0, 0, 1),
+            0 3px 4px rgba(0, 0, 0, 1);
+        }
 
         .nav-orbs-bar {
           position: relative;
           z-index: 1;
           margin-top: 3px;
-          padding: 3px 16px 4px;    /* mobil-look */
+          padding: 3px 16px 4px;
           border-radius: 99px 99px 999px 999px;
           background:
             radial-gradient(circle at 50% 0%, #ffffff, #dde3f3 40%, #8d96b2 90%),
             linear-gradient(180deg, #d5ddf2 0%, #676f8d 100%);
           box-shadow:
+            0 0 0 0.5px rgba(3, 8, 18, 0.95),
             inset 0 1px 0 rgba(255, 255, 255, 0.98),
             inset 0 -2px 3px rgba(20, 22, 40, 0.95),
             0 3px 6px rgba(0, 0, 0, 0.9);
@@ -605,7 +511,7 @@ export default function NavBar() {
           width: 16px;
           height: 16px;
           border-radius: 50%;
-          border: 1px solid rgba(255, 255, 255, 0.95);
+          border: 0.8px solid rgba(255, 255, 255, 0.95);
           box-shadow:
             inset 0 2px 3px rgba(255, 255, 255, 1),
             inset 0 -3px 4px rgba(0, 0, 0, 1),
@@ -640,7 +546,6 @@ export default function NavBar() {
           transform: translateY(-1px);
         }
 
-        /* Unika side-shapes */
         .glass-left-unique {
           border-radius: 299px 999px 299px 999px;
         }
@@ -654,8 +559,46 @@ export default function NavBar() {
           filter: brightness(1.05);
         }
 
+        /* Mobil – skala ner hela skeppet istället för att komprimera */
         @media (max-width: 640px) {
-          /* Behåll bara små tweaks här om du vill justera text senare */
+          .nav-shell {
+            top: 14px;
+            transform: translateX(-50%) scale(0.9);
+          }
+
+          .glass-side {
+            width: 28%;
+            height: 38%;
+          }
+
+          .glass-label {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+          }
+
+          .nav-logo-seat {
+            width: 56px;
+            height: 56px;
+          }
+
+          .nav-orbs-wrapper {
+            top: 86px; /* samma relativa position som desktop */
+          }
+
+          .nav-cta-main {
+            padding: 0.44rem 2.4rem;
+            font-size: 0.64rem;
+            letter-spacing: 0.2em;
+          }
+
+          .nav-cta-glass {
+            width: 118%;
+            height: 112%;
+          }
+
+          .nav-orbs-bar {
+            padding: 3px 14px 4px;
+          }
         }
       `}</style>
     </div>
