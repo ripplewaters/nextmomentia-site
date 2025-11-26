@@ -67,10 +67,10 @@ function EarthBlob() {
         bumpScale={0.035}
         metalness={0.4}
         roughness={0.35}
-        clearcoat={0.7}
-        clearcoatRoughness={0.18}
+        clearcoat={0.65}
+        clearcoatRoughness={0.2}
         envMapIntensity={1.4}
-        sheen={0.6}
+        sheen={0.55}
         sheenColor={new THREE.Color('#cfe8ff')}
         emissiveMap={night}
         emissive={new THREE.Color('#ffdfb0')}
@@ -112,7 +112,7 @@ export default function HomePage() {
         fontFamily: '"Space Grotesk", system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* BG */}
+      {/* Bakgrund */}
       {!isIOS ? (
         <video
           autoPlay
@@ -135,7 +135,8 @@ export default function HomePage() {
       ) : (
         <img
           src="/mockups/shop_bg_fallback.jpg"
-          alt="" // inget alt-text som kan visas som "Background"
+          alt=""
+          aria-hidden="true"
           style={{
             position: 'absolute',
             inset: 0,
@@ -151,141 +152,229 @@ export default function HomePage() {
 
       <NavBar />
 
-      <section className="home-wrap">
-        <div className="home-card">
-          <div className="home-orb-shell">
-            <Canvas
-              camera={{ position: [0, 0, 5], fov: 36 }} // lite mer zoom på desktop
-              gl={{ antialias: true, alpha: true }}
-            >
-              <ambientLight intensity={0.7} />
-              <pointLight position={[3, 4, 4]} intensity={1.4} color="#b7ddff" />
-              <StarField />
-              <EarthBlob />
-              <Environment preset="city" />
-              <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                rotateSpeed={0.6}
-                maxPolarAngle={Math.PI / 2 + 0.4}
-                minPolarAngle={Math.PI / 2 - 0.4}
-              />
-            </Canvas>
+      <section className="hero-wrap">
+        <div className="hero-frame">
+          {/* Brygga som kopplar nav -> glob */}
+          <div className="hero-bridge-shell">
+            <div className="hero-bridge" />
           </div>
 
-          <h1 className="home-title">NEXTMOMENTIA</h1>
+          {/* Rund kapsel med globen */}
+          <div className="hero-orb-zone">
+            <div className="hero-orb-backplate">
+              <div className="hero-orb-inner">
+                <Canvas
+                  camera={{ position: [0, 0, 5], fov: 36 }}
+                  gl={{ antialias: true, alpha: true }}
+                >
+                  <ambientLight intensity={0.7} />
+                  <pointLight
+                    position={[3, 4, 4]}
+                    intensity={1.4}
+                    color="#b7ddff"
+                  />
+                  <StarField />
+                  <EarthBlob />
+                  <Environment preset="city" />
+                  <OrbitControls
+                    enableZoom={false}
+                    enablePan={false}
+                    rotateSpeed={0.6}
+                    maxPolarAngle={Math.PI / 2 + 0.4}
+                    minPolarAngle={Math.PI / 2 - 0.4}
+                  />
+                </Canvas>
+              </div>
+            </div>
+          </div>
+
+          {/* Modul under globen */}
+          <div className="hero-bottom-shell">
+            <div className="hero-status-bar">
+              <div className="hero-status-lights">
+                <span className="hero-status-dot dot-red" />
+                <span className="hero-status-dot dot-yellow" />
+                <span className="hero-status-dot dot-blue" />
+              </div>
+            </div>
+
+            <h1 className="hero-title">NEXTMOMENTIA</h1>
+          </div>
         </div>
       </section>
 
       <style jsx global>{`
-        #home-page .home-wrap {
+        #home-page {
+          overflow-x: hidden;
+        }
+
+        .hero-wrap {
           position: relative;
           z-index: 5;
           min-height: 100dvh;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 170px 32px 130px; /* större på desktop */
+          padding: 170px 20px 120px;
           box-sizing: border-box;
         }
 
-        #home-page .home-card {
-          width: min(980px, 100%); /* bredare card */
-          margin: 0 auto;
-          border-radius: 32px;
-          padding: 34px 48px 46px; /* mer padding */
-          box-sizing: border-box;
-          backdrop-filter: blur(20px) saturate(175%);
-          -webkit-backdrop-filter: blur(20px) saturate(175%);
-          background:
-            radial-gradient(
-              circle at 0% 0%,
-              rgba(160, 210, 255, 0.3),
-              transparent 55%
-            ),
-            radial-gradient(
-              circle at 100% 100%,
-              rgba(110, 80, 220, 0.23),
-              transparent 60%
-            ),
-            rgba(4, 6, 18, 0.9);
-          border: 1px solid rgba(175, 215, 255, 0.48);
-          box-shadow:
-            0 30px 70px rgba(0, 0, 0, 0.98),
-            inset 0 1px 18px rgba(255, 255, 255, 0.05);
+        .hero-frame {
+          width: 100%;
+          max-width: 1040px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          text-align: center;
-          gap: 26px;
+          gap: 14px;
         }
 
-        .home-orb-shell {
+        /* BRYGGAN UNDER NAVEN */
+
+        
+
+        /* ORB ZONE */
+
+        .hero-orb-zone {
           width: 100%;
-          max-width: 640px; /* större orb på desktop */
-          height: 320px;
-          border-radius: 999px;
-          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           position: relative;
-          background: radial-gradient(
-              circle at 30% 0%,
-              rgba(255, 255, 255, 0.3),
-              transparent 60%
+          z-index: 3;
+        }
+
+        .hero-orb-backplate {
+          width: min(520px, 100%);
+          aspect-ratio: 1 / 1;
+          border-radius: 50%;
+          position: relative;
+          overflow: hidden;
+          background:
+            radial-gradient(
+              circle at 25% 0%,
+              rgba(255, 255, 255, 0.32),
+              transparent 55%
             ),
             radial-gradient(circle at 70% 120%, #2f164a, #050713);
           box-shadow:
-            inset 0 1px 6px rgba(255, 255, 255, 0.5),
-            inset 0 -10px 18px rgba(0, 0, 0, 0.95),
-            0 24px 44px rgba(0, 0, 0, 1);
+            inset 0 1px 8px rgba(255, 255, 255, 0.52),
+            inset 0 -14px 26px rgba(0, 0, 0, 0.95),
+            0 26px 50px rgba(0, 0, 0, 1);
         }
 
-        .home-orb-shell canvas {
+        .hero-orb-backplate::before {
+          content: '';
+          position: absolute;
+          inset: 8px;
+          border-radius: 50%;
+          border: 1px solid rgba(130, 205, 255, 0.7);
+          box-shadow:
+            inset 0 0 18px rgba(0, 0, 0, 0.9),
+            0 0 0 0.5px rgba(3, 8, 18, 0.8);
+          pointer-events: none;
+        }
+
+        .hero-orb-inner {
+          position: absolute;
+          inset: 9%;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+
+        .hero-orb-inner canvas {
           width: 100% !important;
           height: 100% !important;
+          display: block;
         }
 
-        .home-title {
-          font-size: clamp(2rem, 2.4vw + 1rem, 2.8rem); /* större titel */
-          letter-spacing: 0.2em;
+        /* BOTTOM MODUL */
+
+       
+
+        
+
+        .hero-title {
+          margin: 0;
+          margin-top: 28px;
+          font-size: clamp(2rem, 2.4vw + 1rem, 2.8rem);
+          letter-spacing: 0.22em;
           text-transform: uppercase;
           background: linear-gradient(90deg, #ffffff, #a8d9ff);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          text-align: center;
           text-shadow: 0 0 26px rgba(170, 220, 255, 0.55);
-          margin-top: 6px;
         }
 
+        /* BREAKPOINTS */
+
         @media (max-width: 900px) {
-          #home-page .home-wrap {
-            padding: 150px 20px 100px;
+          .hero-wrap {
+            padding: 150px 16px 100px;
           }
-          #home-page .home-card {
-            width: min(860px, 100%);
-            padding: 26px 24px 32px;
-            border-radius: 26px;
+
+          .hero-frame {
+            max-width: 760px;
           }
-          .home-orb-shell {
-            height: 260px;
-            max-width: 500px;
+
+          .hero-orb-backplate {
+            width: min(440px, 100%);
+          }
+
+          .hero-bottom-shell {
+            width: min(440px, 100%);
           }
         }
 
         @media (max-width: 640px) {
-          #home-page .home-wrap {
-            padding: 132px 14px 80px;
+          .hero-wrap {
+            padding: 10px 12px 80px;
           }
-          #home-page .home-card {
-            padding: 20px 14px 26px;
-            gap: 18px;
-            border-radius: 22px;
+
+          .hero-frame {
+            gap: 10px;
           }
-          .home-orb-shell {
-            height: 210px;
-            max-width: 360px;
+
+          .hero-bridge-shell {
+            width: min(320px, 100%);
+            height: 34px;
+            margin-bottom: -18px;
           }
-          .home-title {
-            font-size: 1.6rem;
-            letter-spacing: 0.18em;
+
+          .hero-bridge {
+            width: 82%;
+            border-radius: 999px 999px 26px 26px;
+          }
+
+          .hero-orb-backplate {
+            width: min(320px, 100%);
+          }
+
+          .hero-orb-backplate::before {
+            inset: 6px;
+          }
+
+          .hero-orb-inner {
+            inset: 8%;
+          }
+
+          .hero-bottom-shell {
+            width: min(340px, 100%);
+          }
+
+          .hero-status-bar {
+            max-width: 300px;
+            padding: 3px 14px;
+          }
+
+          .hero-status-dot {
+            width: 14px;
+            height: 14px;
+          }
+
+          .hero-title {
+            font-size: 1.45rem;
+            letter-spacing: 0.16em;
           }
         }
       `}</style>
