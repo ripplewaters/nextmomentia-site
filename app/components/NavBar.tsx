@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Space_Grotesk } from 'next/font/google'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -12,6 +12,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export default function NavBar() {
   const pathname = usePathname()
+  const router = useRouter()
 
   const routes = [
     { href: '/', label: 'Home' },
@@ -22,6 +23,18 @@ export default function NavBar() {
   const activeIndex = routes.findIndex((r) => r.href === pathname)
   const safeIndex = activeIndex === -1 ? 0 : activeIndex
   const sideLinks = routes.filter((_, idx) => idx !== safeIndex)
+
+  const handleExplore = () => {
+    if (pathname === '/') {
+      const exploreSection = document.getElementById('explore')
+      if (exploreSection) {
+        exploreSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+    }
+
+    router.push('/#explore')
+  }
 
   return (
     <div className={`nav-shell ${spaceGrotesk.className}`}>
@@ -151,14 +164,9 @@ export default function NavBar() {
           <div className="nav-cta-stack">
             <div className="nav-cta-glass" />
 
-            <a
-              href="https://www.youtube.com/@NextMomentia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-cta-main"
-            >
+            <button type="button" className="nav-cta-main" onClick={handleExplore}>
               Explore
-            </a>
+            </button>
 
             <div className="nav-orbs-bar">
               <a
@@ -412,6 +420,11 @@ export default function NavBar() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
+
+          cursor: pointer;
+          border: none;
+          outline: none;
+          appearance: none;
 
           padding: 0.5rem 2.8rem;
           border-radius: 199px 199px 999px 999px;
