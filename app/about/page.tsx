@@ -38,6 +38,7 @@ function ChromeEarthOrb() {
 
 function StarField() {
   const count = 650
+
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3)
     for (let i = 0; i < count * 3; i += 3) {
@@ -218,7 +219,8 @@ export default function AboutPage() {
           border-radius: 999px;
           overflow: hidden;
           position: relative;
-          background: radial-gradient(
+          background:
+            radial-gradient(
               circle at 30% 0%,
               rgba(255, 255, 255, 0.3),
               transparent 60%
@@ -254,10 +256,12 @@ export default function AboutPage() {
           #about-page .about-wrap {
             padding: 140px 18px 90px;
           }
+
           #about-page .about-card {
             padding: 22px 20px 26px;
             border-radius: 22px;
           }
+
           .about-orb-shell {
             height: 220px;
             max-width: 440px;
@@ -268,14 +272,17 @@ export default function AboutPage() {
           #about-page .about-wrap {
             padding: 132px 14px 80px;
           }
+
           #about-page .about-card {
             padding: 18px 14px 22px;
             gap: 16px;
           }
+
           .about-orb-shell {
             height: 200px;
             max-width: 360px;
           }
+
           .about-body {
             font-size: 0.95rem;
           }

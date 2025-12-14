@@ -1,42 +1,13 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, OrbitControls, useTexture } from '@react-three/drei'
-import * as THREE from 'three'
 
-function MiniCloudOrb() {
-  const groupRef = useRef<THREE.Group | null>(null)
-  const clouds = useTexture('/textures/earth_clouds.jpg')
-
-  useFrame((_, delta) => {
-    if (!groupRef.current) return
-    groupRef.current.rotation.y += delta * 0.25
-    groupRef.current.rotation.x = Math.sin(Date.now() * 0.0004) * 0.18
-  })
-
-  return (
-    <group ref={groupRef} scale={0.9}>
-      <mesh>
-        <sphereGeometry args={[1, 48, 48]} />
-        <meshPhysicalMaterial
-          map={clouds}
-          metalness={0.95}
-          roughness={0.18}
-          clearcoat={1}
-          clearcoatRoughness={0.12}
-          envMapIntensity={1.4}
-          sheen={0.6}
-          sheenColor={new THREE.Color('#bcd9ff')}
-        />
-      </mesh>
-    </group>
-  )
-}
+const BOOK_SRC = '/mockups/NMAP-COVER_WEB2.png'
 
 export default function ShopPage() {
   const [isIOS, setIsIOS] = useState(false)
+  const bookRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (typeof navigator !== 'undefined') {
@@ -58,7 +29,7 @@ export default function ShopPage() {
         fontFamily: '"Space Grotesk", system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* BG */}
+      {/* BG – exakt samma approach som About */}
       {!isIOS ? (
         <video
           autoPlay
@@ -81,7 +52,8 @@ export default function ShopPage() {
       ) : (
         <img
           src="/mockups/shop_bg_fallback.jpg"
-          alt="Background"
+          alt=""
+          aria-hidden="true"
           style={{
             position: 'absolute',
             inset: 0,
@@ -98,41 +70,22 @@ export default function ShopPage() {
 
       <section className="shop-wrap">
         <div className="shop-card">
-          <h1 className="shop-title">Statements in Orbit</h1>
+          <h1 className="shop-title">AWARENESS GUIDE</h1>
 
-          <div className="shop-text-shell">
-            <img
-              src="/textures/text2.png"
-              alt="Question Everything"
-              className="shop-text-img"
-            />
+          <p className="shop-subtitle">
+            Understanding the Digital World - Built for parents.
+            <br />
+            <strong>10 Page PDF Guide - Full of Insight</strong>
+          </p>
+
+          <div className="book-stage">
+            <div className="book-float" ref={bookRef}>
+              <img src={BOOK_SRC} alt="Awareness Guide book" />
+            </div>
+            <div className="book-shadow" />
           </div>
 
           <p className="shop-coming">COMING SOON</p>
-
-          <div className="product-grid">
-  {[0, 1, 2].map((idx) => (
-    <div className="product-circle" key={idx}>
-      <Canvas
-        camera={{ position: [0, 0, 3.1], fov: 40 }}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <ambientLight intensity={0.8} />
-        <pointLight position={[3, 4, 4]} intensity={1.5} color="#b7ddff" />
-        <MiniCloudOrb />
-        <Environment preset="city" />
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          rotateSpeed={0.6}
-          maxPolarAngle={Math.PI / 2 + 0.4}
-          minPolarAngle={Math.PI / 2 - 0.4}
-        />
-      </Canvas>
-    </div>
-  ))}
-</div>
-
         </div>
       </section>
 
@@ -144,43 +97,47 @@ export default function ShopPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 150px 24px 140px;
+          padding: 150px 24px 110px;
           box-sizing: border-box;
         }
 
         #shop-page .shop-card {
-          width: min(880px, 100%);
-          margin: 0 auto;
+          width: min(900px, 100%);
           border-radius: 28px;
-          padding: 40px 48px 50px;
+          padding: 26px 34px 34px;
           box-sizing: border-box;
-          backdrop-filter: blur(20px) saturate(170%);
-          -webkit-backdrop-filter: blur(20px) saturate(170%);
+          margin-top: 3em;
+
+          /* SAMMA GLASS-STIL SOM ABOUT */
+          backdrop-filter: blur(18px) saturate(170%);
+          -webkit-backdrop-filter: blur(18px) saturate(170%);
           background:
             radial-gradient(
               circle at 0% 0%,
-              rgba(160, 210, 255, 0.26),
+              rgba(160, 210, 255, 0.3),
               transparent 55%
             ),
             radial-gradient(
               circle at 100% 100%,
-              rgba(110, 80, 220, 0.22),
+              rgba(110, 80, 220, 0.2),
               transparent 60%
             ),
-            rgba(4, 6, 18, 0.82);
-          border: 1px solid rgba(175, 215, 255, 0.32);
+            rgba(4, 6, 18, 0.88);
+
+          border: 1px solid rgba(175, 215, 255, 0.45);
           box-shadow:
             0 26px 60px rgba(0, 0, 0, 0.9),
-            inset 0 1px 16px rgba(255, 255, 255, 0.04);
+            inset 0 1px 16px rgba(255, 255, 255, 0.05);
+
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          gap: 32px;
+          gap: 20px;
         }
 
         .shop-title {
-          font-size: clamp(1.4rem, 1.8vw + 1rem, 2.2rem);
+          font-size: clamp(1.6rem, 2.1vw + 1rem, 2.4rem);
           letter-spacing: 0.16em;
           text-transform: uppercase;
           background: linear-gradient(90deg, #ffffff, #a8d9ff);
@@ -189,111 +146,89 @@ export default function ShopPage() {
           text-shadow: 0 0 22px rgba(170, 220, 255, 0.45);
         }
 
-        .shop-text-shell {
-          width: 100%;
-          max-width: 520px;
-          aspect-ratio: 16 / 6;
-          border-radius: 699px;
-          overflow: hidden;
-          position: relative;
-          background:
-            radial-gradient(
-              circle at 30% 0%,
-              rgba(255, 255, 255, 0.32),
-              transparent 60%
-            ),
-            radial-gradient(circle at 70% 120%, #2f164a, #050713);
-          box-shadow:
-            inset 0 1px 6px rgba(255, 255, 255, 0.5),
-            inset 0 -10px 18px rgba(0, 0, 0, 0.95),
-            0 22px 40px rgba(0, 0, 0, 1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px 20px;
-          box-sizing: border-box;
+        .shop-subtitle {
+          font-size: 1rem;
+          line-height: 1.7;
+          color: rgba(236, 241, 255, 0.92);
+          max-width: 640px;
+          text-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
         }
 
-        .shop-text-img {
-          max-width: 58%;
-          height: auto;
-          object-fit: contain;
-          filter: drop-shadow(0 0 26px rgba(185, 205, 255, 0.75));
-          opacity: 0.98;
+        .shop-subtitle strong {
+          display: block;
+          margin-top: 4px;
+          font-weight: 700;
+        }
+
+        .book-stage {
+          position: relative;
+          display: grid;
+          place-items: center;
+          padding: 10px 0 14px;
+        }
+
+        .book-float {
+          height: min(52vh, 520px);
+          animation: floatBook 6s ease-in-out infinite;
+          filter: drop-shadow(0 22px 44px rgba(0, 0, 0, 0.75));
+        }
+
+        .book-float img {
+          height: 100%;
+          width: auto;
+          display: block;
+          user-select: none;
+        }
+
+        .book-shadow {
+          width: min(420px, 70vw);
+          height: 32px;
+          background: radial-gradient(
+            closest-side,
+            rgba(0, 0, 0, 0.6),
+            transparent 72%
+          );
+          position: absolute;
+          bottom: 0;
+          filter: blur(2px);
         }
 
         .shop-coming {
           font-size: 0.85rem;
           letter-spacing: 0.32em;
           text-transform: uppercase;
-          color: rgba(240, 245, 255, 0.94);
-          filter: drop-shadow(0 0 12px rgba(150, 180, 255, 0.6));
+          color: rgba(240, 245, 255, 0.95);
         }
 
-        .product-grid {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 34px;
-  margin-top: 20px;
-}
-
-.product-circle {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  padding: 18px;           /* mer luft runt globen */
-  background:
-    radial-gradient(
-      circle at 20% 0%,
-      rgba(255, 255, 255, 0.38),
-      transparent 55%
-    ),
-    radial-gradient(circle at 80% 120%, #1b1233, #040510);
-  box-shadow:
-    inset 0 1px 8px rgba(255, 255, 255, 0.55),
-    inset 0 -12px 20px rgba(0, 0, 0, 0.95),
-    0 22px 40px rgba(0, 0, 0, 0.9);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.product-circle canvas {
-  width: 100%;
-  height: 100%;
-}
+        @keyframes floatBook {
+          0% {
+            transform: translateY(-6px);
+          }
+          50% {
+            transform: translateY(-18px);
+          }
+          100% {
+            transform: translateY(-6px);
+          }
+        }
 
         @media (max-width: 640px) {
           #shop-page .shop-wrap {
-            padding: 132px 14px 90px;
+            padding: 132px 14px 80px;
           }
 
           #shop-page .shop-card {
-            padding: 24px 14px 26px;
-            gap: 24px;
+            padding: 18px 14px 22px;
+            gap: 16px;
           }
 
-          .product-grid {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
-          .product-card {
-            height: 150px;
-            padding: 16px;
-            max-width: 260px;
-            margin: 0 auto;
+          .book-float {
+            height: min(44vh, 420px);
           }
 
-          .product-circle {
-    width: 150px;
-    height: 150px;
-    padding: 16px;
-  }
-}
+          .shop-subtitle {
+            font-size: 0.95rem;
+          }
         }
       `}</style>
     </main>

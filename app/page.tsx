@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import NavBar from './components/NavBar'
-import YoutubeFeed from './components/YoutubeFeed'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
@@ -26,10 +25,7 @@ function StarField() {
   return (
     <points>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.045}
@@ -205,20 +201,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="explore" className="explore-section">
-        <div className="explore-frame">
-          <div className="explore-meta">
-            <p className="eyebrow">Explore</p>
-            <h2 className="explore-title">Latest from YouTube</h2>
-            <p className="explore-subtitle">
-              Watch the newest drops from NextMomentia without leaving the launchpad.
-            </p>
-          </div>
-
-          <YoutubeFeed />
-        </div>
-      </section>
-
       <style jsx global>{`
         #home-page {
           overflow-x: hidden;
@@ -245,8 +227,6 @@ export default function HomePage() {
         }
 
         /* BRYGGAN UNDER NAVEN */
-
-        
 
         /* ORB ZONE */
 
@@ -305,10 +285,6 @@ export default function HomePage() {
 
         /* BOTTOM MODUL */
 
-       
-
-        
-
         .hero-title {
           margin: 0;
           margin-top: 28px;
@@ -320,54 +296,6 @@ export default function HomePage() {
           -webkit-text-fill-color: transparent;
           text-align: center;
           text-shadow: 0 0 26px rgba(170, 220, 255, 0.55);
-        }
-
-        .explore-section {
-          position: relative;
-          z-index: 4;
-          padding: 40px 20px 100px;
-          background: linear-gradient(180deg, rgba(0, 4, 12, 0.92), rgba(3, 8, 18, 0.95));
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .explore-frame {
-          width: 100%;
-          max-width: 1160px;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          align-items: stretch;
-        }
-
-        .explore-meta {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          color: #dfe8ff;
-        }
-
-        .eyebrow {
-          margin: 0;
-          font-size: 0.82rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #7fe4ff;
-          font-weight: 700;
-        }
-
-        .explore-title {
-          margin: 0;
-          font-size: clamp(1.8rem, 1vw + 1.4rem, 2.3rem);
-          letter-spacing: 0.04em;
-        }
-
-        .explore-subtitle {
-          margin: 0;
-          max-width: 720px;
-          color: rgba(223, 232, 255, 0.78);
-          font-size: 1rem;
-          line-height: 1.6;
         }
 
         /* BREAKPOINTS */
